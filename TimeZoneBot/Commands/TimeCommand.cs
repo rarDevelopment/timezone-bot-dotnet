@@ -21,6 +21,7 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
     }
 
     [SlashCommand("time", "Get the current time for the specified user in their time zone.")]
+
     public async Task TimeSlashCommand(
         [Summary("User", "The user whose current time will be shown")]
         IUser user)
@@ -49,19 +50,19 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
         }
         catch (PersonNotFoundException ex)
         {
-            _logger.LogError(ex, "Error in TimeSlashCommand");
+            _logger.LogError(ex, "PersonNotFound in TimeSlashCommand");
             await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Person Not Found",
                 "That person wasn't found!", Context.User));
         }
-        catch (TimeZoneNotFoundException ex)
+        catch (NoTimeZoneException ex)
         {
-            _logger.LogError(ex, "Error in TimeSlashCommand");
+            _logger.LogError(ex, "NoTimeZone in TimeSlashCommand");
             await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Time Zone Not Found",
                 "The associated time zone was not valid.", Context.User));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error in TimeSlashCommand");
+            _logger.LogError(ex, "Unhandled error in TimeSlashCommand");
             await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Something Went Wrong",
                 "There was an unexpected error.", Context.User));
         }
@@ -96,19 +97,19 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
         }
         catch (PersonNotFoundException ex)
         {
-            _logger.LogError(ex, "Error in TimeSlashCommand");
+            _logger.LogError(ex, "PersonNotFound in TimeMessageCommand");
             await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Person Not Found",
                 "That person wasn't found!", Context.User));
         }
-        catch (TimeZoneNotFoundException ex)
+        catch (NoTimeZoneException ex)
         {
-            _logger.LogError(ex, "Error in TimeSlashCommand");
+            _logger.LogError(ex, "NoTimeZone in TimeMessageCommand");
             await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Time Zone Not Found",
                 "The associated time zone was not valid.", Context.User));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error in TimeSlashCommand");
+            _logger.LogError(ex, "Unhandled error in TimeMessageCommand");
             await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Something Went Wrong",
                 "There was an unexpected error.", Context.User));
         }
@@ -135,19 +136,19 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
         }
         catch (PersonNotFoundException ex)
         {
-            _logger.LogError(ex, "Error in TimeSlashCommand");
+            _logger.LogError(ex, "PersonNotFound in TimeUserCommand");
             await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Person Not Found",
                 "That person wasn't found!", Context.User));
         }
-        catch (TimeZoneNotFoundException ex)
+        catch (NoTimeZoneException ex)
         {
-            _logger.LogError(ex, "Error in TimeSlashCommand");
+            _logger.LogError(ex, "NoTimeZone in TimeUserCommand");
             await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Time Zone Not Found",
                 "The associated time zone was not valid.", Context.User));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error in TimeSlashCommand");
+            _logger.LogError(ex, "Unhandled error in TimeUserCommand");
             await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Something Went Wrong",
                 "There was an unexpected error.", Context.User));
         }
