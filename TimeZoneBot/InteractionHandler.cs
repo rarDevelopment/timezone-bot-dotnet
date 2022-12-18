@@ -1,9 +1,4 @@
-using Discord;
-using Discord.Interactions;
-using Discord.WebSocket;
-using System;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace TimeZoneBot
 {
@@ -38,12 +33,14 @@ namespace TimeZoneBot
                 var result = await _handler.ExecuteCommandAsync(context, _services);
 
                 if (!result.IsSuccess)
+                {
                     switch (result.Error)
                     {
                         case InteractionCommandError.UnmetPrecondition:
                             _logger.LogInformation($"Unmet precondition - {result.Error}");
                             break;
                     }
+                }
             }
             catch
             {

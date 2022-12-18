@@ -10,8 +10,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using System.Reflection;
+using NodaTime;
 using TimeZoneBot;
-
+using TimeZoneBot.BusinessLayer;
+using TimeZoneBot.DataLayer;
+using TimeZoneBot.Models;
 
 var builder = new HostBuilder();
 
@@ -49,9 +52,24 @@ builder.ConfigureServices((host, services) =>
     {
         BotToken = host.Configuration["Discord:BotToken"]
     };
+    var databaseSettings = new DatabaseSettings
+    {
+        Cluster = host.Configuration["Database:Cluster"],
+        User = host.Configuration["Database:User"],
+        Password = host.Configuration["Database:Password"],
+        Name = host.Configuration["Database:Name"],
+    };
 
     services.AddSingleton(discordSettings);
+    services.AddSingleton(databaseSettings);
+
     services.AddScoped<IDiscordFormatter, DiscordFormatter>();
+
+    services.AddScoped<ITimeZoneBusinessLayer, TimeZoneBusinessLayer>();
+    services.AddScoped<IPersonDataLayer, PersonDataLayer>();
+
+    IClock clock = SystemClock.Instance;
+    services.AddTransient(_ => clock);
 
     services.AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()));
 

@@ -39,6 +39,12 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="6.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TimeZoneBot.BusinessLayer\TimeZoneBot.BusinessLayer.csproj" />
+    <ProjectReference Include="..\TimeZoneBot.DataLayer\TimeZoneBot.DataLayer.csproj" />
+    <ProjectReference Include="..\TimeZoneBot.Models\TimeZoneBot.Models.csproj" />
+  </ItemGroup>
+
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 
 </Project>

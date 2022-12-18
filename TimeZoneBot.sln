@@ -3,7 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33122.133
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeZoneBot", "TimeZoneBot\TimeZoneBot.csproj", "{BC0A0E08-73A0-433D-8855-4E8A7A39D222}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimeZoneBot", "TimeZoneBot\TimeZoneBot.csproj", "{BC0A0E08-73A0-433D-8855-4E8A7A39D222}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeZoneBot.DataLayer", "TimeZoneBot.DataLayer\TimeZoneBot.DataLayer.csproj", "{222B7D1A-DF5F-4DA8-B906-7B10BF92B251}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeZoneBot.Models", "TimeZoneBot.Models\TimeZoneBot.Models.csproj", "{97010D37-476A-45B0-B68B-F7241B3EC261}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeZoneBot.BusinessLayer", "TimeZoneBot.BusinessLayer\TimeZoneBot.BusinessLayer.csproj", "{D988FAC6-AD9F-49EE-A361-C9995A2FE03B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +21,18 @@ Global
 		{BC0A0E08-73A0-433D-8855-4E8A7A39D222}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC0A0E08-73A0-433D-8855-4E8A7A39D222}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC0A0E08-73A0-433D-8855-4E8A7A39D222}.Release|Any CPU.Build.0 = Release|Any CPU
+		{222B7D1A-DF5F-4DA8-B906-7B10BF92B251}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{222B7D1A-DF5F-4DA8-B906-7B10BF92B251}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{222B7D1A-DF5F-4DA8-B906-7B10BF92B251}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{222B7D1A-DF5F-4DA8-B906-7B10BF92B251}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97010D37-476A-45B0-B68B-F7241B3EC261}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97010D37-476A-45B0-B68B-F7241B3EC261}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97010D37-476A-45B0-B68B-F7241B3EC261}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97010D37-476A-45B0-B68B-F7241B3EC261}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D988FAC6-AD9F-49EE-A361-C9995A2FE03B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D988FAC6-AD9F-49EE-A361-C9995A2FE03B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D988FAC6-AD9F-49EE-A361-C9995A2FE03B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D988FAC6-AD9F-49EE-A361-C9995A2FE03B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
