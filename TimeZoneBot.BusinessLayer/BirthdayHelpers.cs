@@ -5,11 +5,14 @@ namespace TimeZoneBot.BusinessLayer
 {
     public class BirthdayHelpers
     {
-        private const string BirthdayFormat = "dddd, dd MMMM";
+        private const string BirthdayFormat = "MMMM dd, yyyy";
+        private const string BirthdayFormatWithDay = "MMMM dd, yyyy (dddd)";
 
-        public static string FormatBirthday(LocalDate birthday)
+        public static string FormatBirthday(LocalDate birthday, bool includeDay = false)
         {
-            return birthday.ToString(BirthdayFormat, new DateTimeFormatInfo());
+            return includeDay
+                ? birthday.ToString(BirthdayFormatWithDay, new DateTimeFormatInfo())
+                : birthday.ToString(BirthdayFormat, new DateTimeFormatInfo());
         }
     }
 }

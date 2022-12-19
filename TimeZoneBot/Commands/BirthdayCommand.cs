@@ -70,7 +70,7 @@ public class BirthdayCommand : InteractionModuleBase<SocketInteractionContext>
 
     private static string BuildBirthdayMessage(LocalDate birthday)
     {
-        return $"🎈 **{BirthdayHelpers.FormatBirthday(birthday)}**";
+        return $"🎈 **{BirthdayHelpers.FormatBirthday(birthday, true)}**";
     }
 
     [MessageCommand("Get User's Birthday")]

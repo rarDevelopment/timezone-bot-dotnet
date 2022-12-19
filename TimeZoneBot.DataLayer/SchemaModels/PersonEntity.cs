@@ -1,6 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using NodaTime;
+using NodaTime.Text;
 using TimeZoneBot.Models;
 
 namespace TimeZoneBot.DataLayer.SchemaModels;
@@ -27,7 +28,7 @@ public class PersonEntity
 
     public Person ToDomain()
     {
-        LocalDate? birthday = Birthday != null ? new LocalDate() : null;
+        LocalDate? birthday = Birthday != null ? LocalDatePattern.Iso.Parse(Birthday).GetValueOrThrow() : null;
         return new Person(Snowflake, TimeZone, birthday);
     }
 }

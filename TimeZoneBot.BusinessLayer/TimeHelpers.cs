@@ -5,8 +5,11 @@ namespace TimeZoneBot.BusinessLayer
 {
     public static class TimeHelpers
     {
-        private const string TimeFormat = "h:mm tt";
+        public const string TimeFormat = "h:mm tt";
         private const string DayFormat = "dddd, dd MMMM";
+
+        public const string AM = "AM";
+        public const string PM = "PM";
 
         public static string FormatTime(LocalTime time)
         {

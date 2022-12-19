@@ -36,21 +36,7 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
 
         try
         {
-            if (!string.IsNullOrEmpty(specifiedTime))
-            {
-                var time = await _timeZoneBusinessLayer.GetSpecificTimeForPerson(user.Id, Context.User.Id, specifiedTime);
-                //if (time == null)
-                //{
-                //    await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Error Finding Time",
-                //        "Could not find time for person.", Context.User));
-                //    return;
-                //}
-
-                var message = BuildSpecificTimeMessage(time, specifiedTime);
-                await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"Specific Time Request for {user.Username}",
-                    message, Context.User));
-            }
-            else
+            if (string.IsNullOrEmpty(specifiedTime))
             {
                 var time = await _timeZoneBusinessLayer.GetTimeForPerson(user.Id);
                 if (time == null)
@@ -64,6 +50,22 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
                 await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"Current Time for {user.Username}",
                     message, Context.User));
             }
+            else
+            {
+                var time = await _timeZoneBusinessLayer.GetSpecificTimeForPerson(user.Id, Context.User.Id,
+                    specifiedTime);
+
+                var message = BuildSpecificTimeMessage(time.TimeOfDay, specifiedTime, user);
+                await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed(
+                    $"Specific Time Request for {user.Username}",
+                    message, Context.User));
+            }
+        }
+        catch (MissingMeridiemException ex)
+        {
+            _logger.LogError(ex, "MissingMeridiem in TimeSlashCommand");
+            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Missing Meridiem",
+                "You must specify AM or PM.", Context.User));
         }
         catch (PersonNotFoundException ex)
         {
@@ -85,9 +87,9 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
         }
     }
 
-    private static string BuildSpecificTimeMessage(LocalTime time, string specifiedTime)
+    private static string BuildSpecificTimeMessage(LocalTime time, string specifiedTime, IUser user)
     {
-        return $"At {specifiedTime} your time, it will be **{TimeHelpers.FormatTime(time)}**";
+        return $"At _{specifiedTime}_ your time, it will be **{TimeHelpers.FormatTime(time)}** in {user.Username}'s time.";
     }
 
     private static string BuildTimeMessage(ZonedDateTime time)

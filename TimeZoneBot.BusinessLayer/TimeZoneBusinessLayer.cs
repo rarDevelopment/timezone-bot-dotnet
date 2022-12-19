@@ -1,4 +1,5 @@
 ﻿using NodaTime;
+using NodaTime.Text;
 using TimeZoneBot.DataLayer;
 using TimeZoneBot.Models.Exceptions;
 
@@ -32,7 +33,7 @@ public class TimeZoneBusinessLayer : ITimeZoneBusinessLayer
         return timeForPerson;
     }
 
-    public async Task<LocalTime> GetSpecificTimeForPerson(ulong targetUserId, ulong requesterUserId, string time)
+    public async Task<ZonedDateTime> GetSpecificTimeForPerson(ulong targetUserId, ulong requesterUserId, string time)
     {
         var targetPerson = await _personDataLayer.GetPerson(targetUserId);
         if (targetPerson == null)
@@ -60,20 +61,20 @@ public class TimeZoneBusinessLayer : ITimeZoneBusinessLayer
             throw new NoTimeZoneException(requesterUserId);
         }
 
-        var timeSplit = time.Trim().Split(":");
-        var hours = Convert.ToInt32(timeSplit[0]);
-        var minutes = timeSplit.Length >= 2 ? Convert.ToInt32(timeSplit[1]) : 0;
-        var seconds = timeSplit.Length >= 3 ? Convert.ToInt32(timeSplit[2]) : 0;
+        if (!time.ToLower().Contains(TimeHelpers.AM.ToLower()) && !time.ToLower().Contains(TimeHelpers.PM.ToLower()))
+        {
+            throw new MissingMeridiemException(time);
+        }
+        var localTime = LocalTimePattern.CreateWithInvariantCulture(TimeHelpers.TimeFormat).Parse(time).GetValueOrThrow();
 
         var requesterCurrentDate = _clock.GetCurrentInstant().InZone(requesterTimeZone).Date;
-        var localTime = new LocalTime(hours, minutes, seconds);
 
         var requesterTime = requesterCurrentDate + localTime;
         var requesterTimeZoned = requesterTime.InZoneLeniently(requesterTimeZone);
 
         var targetTime = requesterTimeZoned.ToInstant().InZone(targetTimeZone);
         
-        return targetTime.TimeOfDay;
+        return targetTime;
     }
 
     private static ZonedDateTime GetTimeInTimeZone(DateTimeZone timeZone, Instant timeInstantToConvert)
@@ -85,5 +86,5 @@ public class TimeZoneBusinessLayer : ITimeZoneBusinessLayer
 public interface ITimeZoneBusinessLayer
 {
     Task<ZonedDateTime?> GetTimeForPerson(ulong userId);
-    Task<LocalTime> GetSpecificTimeForPerson(ulong targetUserId, ulong requesterUserId, string time);
+    Task<ZonedDateTime> GetSpecificTimeForPerson(ulong targetUserId, ulong requesterUserId, string time);
 }
