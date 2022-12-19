@@ -23,8 +23,8 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
     [SlashCommand("time", "Get the current time for the specified user in their time zone.")]
 
     public async Task TimeSlashCommand(
-        [Summary("User", "The user whose current time will be shown")]
-        IUser user)
+        [Summary("User", "The user whose current time will be shown")] IUser user,
+        [Summary("Time", "The specific time in your time zone that you'd like to know in the other person's time zone.")] string? specifiedTime)
     {
         var member = Context.Guild.Users.FirstOrDefault(u => u.Id == Context.User.Id);
         if (member == null)
@@ -36,17 +36,34 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
 
         try
         {
-            var time = await _timeZoneBusinessLayer.GetTimeForPerson(user.Id);
-            if (time == null)
+            if (!string.IsNullOrEmpty(specifiedTime))
             {
-                await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Error Finding Time",
-                    "Could not find time for person.", Context.User));
-                return;
-            }
+                var time = await _timeZoneBusinessLayer.GetSpecificTimeForPerson(user.Id, Context.User.Id, specifiedTime);
+                //if (time == null)
+                //{
+                //    await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Error Finding Time",
+                //        "Could not find time for person.", Context.User));
+                //    return;
+                //}
 
-            var message = BuildTimeMessage(time.Value);
-            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"Current Time for {user.Username}",
-                message, Context.User));
+                var message = BuildSpecificTimeMessage(time, specifiedTime);
+                await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"Specific Time Request for {user.Username}",
+                    message, Context.User));
+            }
+            else
+            {
+                var time = await _timeZoneBusinessLayer.GetTimeForPerson(user.Id);
+                if (time == null)
+                {
+                    await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Error Finding Time",
+                        "Could not find time for person.", Context.User));
+                    return;
+                }
+
+                var message = BuildTimeMessage(time.Value);
+                await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"Current Time for {user.Username}",
+                    message, Context.User));
+            }
         }
         catch (PersonNotFoundException ex)
         {
@@ -68,10 +85,15 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
         }
     }
 
+    private static string BuildSpecificTimeMessage(LocalTime time, string specifiedTime)
+    {
+        return $"At {specifiedTime} your time, it will be **{TimeHelpers.FormatTime(time)}**";
+    }
+
     private static string BuildTimeMessage(ZonedDateTime time)
     {
-        var emoji = $"{TimeHelpers.GetEmojiForTime(time)}";
-        return $"{emoji} **{TimeHelpers.FormatTime(time)}** on **{TimeHelpers.FormatDay(time)}**";
+        var emoji = $"{TimeHelpers.GetEmojiForTime(time.TimeOfDay)}";
+        return $"{emoji} **{TimeHelpers.FormatTime(time.TimeOfDay)}** on **{TimeHelpers.FormatDay(time)}**";
     }
 
     [MessageCommand("Get User's Current Time")]

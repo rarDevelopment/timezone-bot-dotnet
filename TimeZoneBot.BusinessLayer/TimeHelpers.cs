@@ -8,7 +8,7 @@ namespace TimeZoneBot.BusinessLayer
         private const string TimeFormat = "h:mm tt";
         private const string DayFormat = "dddd, dd MMMM";
 
-        public static string FormatTime(ZonedDateTime time)
+        public static string FormatTime(LocalTime time)
         {
             return time.ToString(TimeFormat, new DateTimeFormatInfo());
         }
@@ -18,7 +18,7 @@ namespace TimeZoneBot.BusinessLayer
             return time.ToString(DayFormat, new DateTimeFormatInfo());
         }
 
-        public static string GetEmojiForTime(ZonedDateTime time)
+        public static string GetEmojiForTime(LocalTime time)
         {
             var formattedTime = FormatTime(time);
             const string replaceText = "{{REPLACE}}";

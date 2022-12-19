@@ -66,6 +66,7 @@ builder.ConfigureServices((host, services) =>
     services.AddScoped<IDiscordFormatter, DiscordFormatter>();
 
     services.AddScoped<ITimeZoneBusinessLayer, TimeZoneBusinessLayer>();
+    services.AddScoped<IBirthdayBusinessLayer, BirthdayBusinessLayer>();
     services.AddScoped<IPersonDataLayer, PersonDataLayer>();
 
     IClock clock = SystemClock.Instance;

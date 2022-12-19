@@ -27,8 +27,7 @@ public class PersonEntity
 
     public Person ToDomain()
     {
-        LocalDate? birthday = Birthday != null ? new LocalDate(2022,12,17) : null;
-        var person = new Person(Snowflake, TimeZone, birthday);
-        return person;
+        LocalDate? birthday = Birthday != null ? new LocalDate() : null;
+        return new Person(Snowflake, TimeZone, birthday);
     }
 }
