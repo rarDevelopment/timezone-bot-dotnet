@@ -76,6 +76,7 @@ public class BirthdayAllCommand : InteractionModuleBase<SocketInteractionContext
                 orderedBirthdays = userBirthdays.OrderBy(ub =>
                 {
                     var annualDate = new AnnualDate(ub.Value.Month, ub.Value.Day);
+                    // TODO: determine if we can depend on having the user's timezone here
                     var lenientBirthday = GetLenientBirthday(annualDate, _clock.GetCurrentInstant().InUtc().Year);
                     if (lenientBirthday < _clock.GetCurrentInstant().InUtc().Date)
                     {
