@@ -1,4 +1,5 @@
 ﻿using NodaTime;
+using TimeZoneBot.BusinessLayer.Interfaces;
 using TimeZoneBot.DataLayer;
 using TimeZoneBot.Models.Exceptions;
 
@@ -22,10 +23,5 @@ namespace TimeZoneBot.BusinessLayer
             }
             return person.Birthday;
         }
-    }
-
-    public interface IBirthdayBusinessLayer
-    {
-        Task<LocalDate?> GetBirthdayForPerson(ulong userId);
     }
 }

@@ -1,5 +1,7 @@
 ﻿using NodaTime;
 using NodaTime.Text;
+using System.Text.RegularExpressions;
+using TimeZoneBot.BusinessLayer.Interfaces;
 using TimeZoneBot.DataLayer;
 using TimeZoneBot.Models.Exceptions;
 
@@ -61,11 +63,17 @@ public class TimeZoneBusinessLayer : ITimeZoneBusinessLayer
             throw new NoTimeZoneException(requesterUserId);
         }
 
-        if (!time.ToLower().Contains(TimeHelpers.AM.ToLower()) && !time.ToLower().Contains(TimeHelpers.PM.ToLower()))
+        var cleanedTime = CleanTime(time);
+
+        LocalTime localTime;
+        try
         {
-            throw new MissingMeridiemException(time);
+            localTime = LocalTimePattern.CreateWithInvariantCulture(TimeHelpers.TimeFormat).Parse(cleanedTime).GetValueOrThrow();
         }
-        var localTime = LocalTimePattern.CreateWithInvariantCulture(TimeHelpers.TimeFormat).Parse(time).GetValueOrThrow();
+        catch (Exception)
+        {
+            localTime = LocalTimePattern.CreateWithInvariantCulture(TimeHelpers.TimeFormat24Hour).Parse(cleanedTime).GetValueOrThrow();
+        }
 
         var requesterCurrentDate = _clock.GetCurrentInstant().InZone(requesterTimeZone).Date;
 
@@ -73,18 +81,42 @@ public class TimeZoneBusinessLayer : ITimeZoneBusinessLayer
         var requesterTimeZoned = requesterTime.InZoneLeniently(requesterTimeZone);
 
         var targetTime = requesterTimeZoned.ToInstant().InZone(targetTimeZone);
-        
+
         return targetTime;
+    }
+
+    private static string CleanTime(string time)
+    {
+        var multipleSpacesRegex = new Regex("[ ]{2,}");
+        var cleanedTime = time.Trim();
+        var meridiemFound = Meridiem.NoMeridiem;
+
+        var allMeridiems = TimeHelpers.GetAllMeridiems();
+
+        foreach (var meridiem in allMeridiems)
+        {
+            if (TimeHelpers.HasMeridiem(meridiem, time))
+            {
+                meridiemFound = meridiem;
+            }
+        }
+        var indexOfMeridiem = cleanedTime.IndexOf(meridiemFound.ToString(), StringComparison.InvariantCultureIgnoreCase);
+
+        if (meridiemFound != Meridiem.NoMeridiem && indexOfMeridiem > 0) //accounts for -1 meaning none found and AM or PM not in the first position (which would not be valid time anyway)
+        {
+            if (cleanedTime[indexOfMeridiem - 1] != ' ')
+            {
+                cleanedTime = cleanedTime.Replace(meridiemFound.ToString(), $" {meridiemFound}", StringComparison.InvariantCultureIgnoreCase);
+            }
+        }
+
+        cleanedTime = multipleSpacesRegex.Replace(cleanedTime, " ");
+
+        return cleanedTime;
     }
 
     private static ZonedDateTime GetTimeInTimeZone(DateTimeZone timeZone, Instant timeInstantToConvert)
     {
         return timeInstantToConvert.InZone(timeZone);
     }
-}
-
-public interface ITimeZoneBusinessLayer
-{
-    Task<ZonedDateTime?> GetTimeForPerson(ulong userId);
-    Task<ZonedDateTime> GetSpecificTimeForPerson(ulong targetUserId, ulong requesterUserId, string time);
 }

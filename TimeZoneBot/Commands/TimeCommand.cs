@@ -1,6 +1,8 @@
-﻿using DiscordDotNetUtilities.Interfaces;
+﻿using System.Text.RegularExpressions;
+using DiscordDotNetUtilities.Interfaces;
 using NodaTime;
 using TimeZoneBot.BusinessLayer;
+using TimeZoneBot.BusinessLayer.Interfaces;
 using TimeZoneBot.Models.Exceptions;
 
 namespace TimeZoneBot.Commands;
@@ -52,6 +54,13 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
             }
             else
             {
+                var timeRegex = new Regex(TimeHelpers.TimeRegexPattern, RegexOptions.IgnoreCase);
+                if (!timeRegex.IsMatch(specifiedTime))
+                {
+                    await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Error with Provided Time",
+                        "The time provided was not a valid time format.", user));
+                }
+
                 var time = await _timeZoneBusinessLayer.GetSpecificTimeForPerson(user.Id, Context.User.Id,
                     specifiedTime);
 

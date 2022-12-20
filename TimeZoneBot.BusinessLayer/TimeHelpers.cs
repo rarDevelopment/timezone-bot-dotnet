@@ -5,11 +5,27 @@ namespace TimeZoneBot.BusinessLayer
 {
     public static class TimeHelpers
     {
+        public const string TimeRegexPattern =
+            "(([0-1]?[0-9]|2[0-3]):[0-5][0-9]( |)(am|pm|)|([0-1]?[0-9]|2[0-3])( |)(am|pm))";
         public const string TimeFormat = "h:mm tt";
+        public const string TimeFormat24Hour = "H:mm";
         private const string DayFormat = "dddd, dd MMMM";
 
-        public const string AM = "AM";
-        public const string PM = "PM";
+        public static bool HasMeridiem(Meridiem meridiem, string time)
+        {
+            return time.ToLower().Contains(meridiem.ToString().ToLower());
+        }
+
+        public static bool HasAnyMeridiem(string time)
+        {
+            var allValues = GetAllMeridiems();
+            return allValues.Any(meridiem => HasMeridiem(meridiem, time));
+        }
+
+        public static Meridiem[] GetAllMeridiems()
+        {
+            return (Meridiem[])Enum.GetValues(typeof(Meridiem));
+        }
 
         public static string FormatTime(LocalTime time)
         {
