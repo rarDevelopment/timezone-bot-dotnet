@@ -9,14 +9,17 @@ namespace TimeZoneBot.Commands;
 public class BirthdayAllCommand : InteractionModuleBase<SocketInteractionContext>
 {
     private readonly IBirthdayBusinessLayer _birthdayBusinessLayer;
+    private readonly IClock _clock;
     private readonly IDiscordFormatter _discordFormatter;
     private readonly ILogger<DiscordBot> _logger;
 
     public BirthdayAllCommand(IBirthdayBusinessLayer birthdayBusinessLayer,
+        IClock clock,
         IDiscordFormatter discordFormatter,
         ILogger<DiscordBot> logger)
     {
         _birthdayBusinessLayer = birthdayBusinessLayer;
+        _clock = clock;
         _discordFormatter = discordFormatter;
         _logger = logger;
     }
@@ -25,11 +28,22 @@ public class BirthdayAllCommand : InteractionModuleBase<SocketInteractionContext
 
     public async Task BirthdayAllSlashCommand()
     {
-        var members =
-            Context.Guild.Users.Where(u => u.GetPermissions(Context.Channel as IGuildChannel).ViewChannel && !u.IsBot);
+        var members = Context.Guild.Users.Where(u => u.GetPermissions(Context.Channel as IGuildChannel).ViewChannel && !u.IsBot);
 
         await DeferAsync();
 
+        var message = await BuildAllBirthdaysMessage(members, BirthdaySortOrder.NoSort);
+
+        var buttonBuilder = new ComponentBuilder()
+            .WithButton("Sort By Age", $"birthdaySort:{BirthdaySortOrder.SortByAge}", emote: new Emoji("🧓🏼"))
+            .WithButton("Sort By Next Birthday", $"birthdaySort:{BirthdaySortOrder.SortByNextBirthday}", emote: new Emoji("➡️"));
+
+        await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed("Birthdays", message, Context.User), components: buttonBuilder.Build());
+    }
+
+    private async Task<string> BuildAllBirthdaysMessage(IEnumerable<SocketGuildUser> members,
+        BirthdaySortOrder sortType)
+    {
         Dictionary<IUser, LocalDate> userBirthdays = new();
 
         foreach (var user in members)
@@ -44,27 +58,70 @@ public class BirthdayAllCommand : InteractionModuleBase<SocketInteractionContext
 
                 userBirthdays.Add(user, birthday.Value);
             }
-            catch (PersonNotFoundException ex)
-            {
-                _logger.LogError(ex, "PersonNotFound in BirthdaySlashCommand");
-                await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Person Not Found",
-                    "That person wasn't found!", Context.User));
-            }
-            catch (NoBirthdayException)
-            {
-            }
+            catch (PersonNotFoundException) { }
+            catch (NoBirthdayException) { }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unhandled error in BirthdaySlashCommand");
-                await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Something Went Wrong",
-                    "There was an unexpected error.", Context.User));
             }
-
-            var messagesToSend = userBirthdays.Select(userBirthday => BuildBirthdayMessage(userBirthday.Value, userBirthday.Key));
-            var message = string.Join("\n", messagesToSend);
-            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"{user.Username}'s Birthday",
-                message, Context.User));
         }
+
+        IOrderedEnumerable<KeyValuePair<IUser, LocalDate>> orderedBirthdays;
+        switch (sortType)
+        {
+            case BirthdaySortOrder.SortByAge:
+                orderedBirthdays = userBirthdays.OrderBy(b => b.Value);
+                break;
+            case BirthdaySortOrder.SortByNextBirthday:
+                orderedBirthdays = userBirthdays.OrderBy(ub =>
+                {
+                    var annualDate = new AnnualDate(ub.Value.Month, ub.Value.Day);
+                    var lenientBirthday = GetLenientBirthday(annualDate, _clock.GetCurrentInstant().InUtc().Year);
+                    if (lenientBirthday < _clock.GetCurrentInstant().InUtc().Date)
+                    {
+                        lenientBirthday = new LocalDate(lenientBirthday.Year + 1, lenientBirthday.Month,
+                            lenientBirthday.Day);
+                    }
+                    return lenientBirthday;
+                });
+                break;
+            case BirthdaySortOrder.NoSort:
+            default:
+                orderedBirthdays = userBirthdays.OrderBy(u => u.Key.Username);
+                break;
+        }
+
+        var messagesToSend = orderedBirthdays.Select(userBirthday => BuildBirthdayMessage(userBirthday.Value, userBirthday.Key));
+        var message = string.Join("\n", messagesToSend);
+        return message;
+    }
+
+    private static LocalDate GetLenientBirthday(AnnualDate annualDate, int year)
+    {
+        if (annualDate.Month == 2 && annualDate.Day == 29)
+        {
+            return new LocalDate(year, 2, 28);
+        }
+
+        return new LocalDate(year, annualDate.Month, annualDate.Day);
+    }
+
+    [ComponentInteraction("birthdaySort:*")]
+    public async Task SortButton(string sortingTypeParam)
+    {
+        await DeferAsync();
+        var members = Context.Guild.Users.Where(u => u.GetPermissions(Context.Channel as IGuildChannel).ViewChannel && !u.IsBot);
+        if (!Enum.TryParse(typeof(BirthdaySortOrder), sortingTypeParam, out var sortingType))
+        {
+            _logger.LogError("Error in SortButton, could not parse sort type.");
+            return;
+        }
+
+        var message = await BuildAllBirthdaysMessage(members, (BirthdaySortOrder)sortingType!);
+        var buttonBuilder = new ComponentBuilder()
+            .WithButton("Sort By Age", $"birthdaySort:{BirthdaySortOrder.SortByAge}", emote: new Emoji("🧓🏼"))
+            .WithButton("Sort By Next Birthday", $"birthdaySort:{BirthdaySortOrder.SortByNextBirthday}", emote: new Emoji("➡️"));
+        await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed("Birthdays", message, Context.User), components: buttonBuilder.Build());
     }
 
     private static string BuildBirthdayMessage(LocalDate birthday, IUser user)
