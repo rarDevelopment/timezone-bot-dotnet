@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using Discord;
 using NodaTime;
 
 namespace TimeZoneBot.BusinessLayer
@@ -9,7 +10,9 @@ namespace TimeZoneBot.BusinessLayer
             "(([0-1]?[0-9]|2[0-3]):[0-5][0-9]( |)(am|pm|)|([0-1]?[0-9]|2[0-3])( |)(am|pm))";
         public const string TimeFormat = "h:mm tt";
         public const string TimeFormat24Hour = "H:mm";
-        private const string DayFormat = "dddd, dd MMMM";
+        public const string DayFormat = "dddd, dd MMMM";
+        public const string TimeButtonEmojiId = "819015682871001108";
+        public const string TimeButtonEmojiName = "time_button";
 
         public static bool HasMeridiem(Meridiem meridiem, string time)
         {
@@ -48,6 +51,22 @@ namespace TimeZoneBot.BusinessLayer
                 ? $"{timeSplit[0]}30"
                 : $"{timeSplit[0]}");
             return emoji;
+        }
+
+        public static Emote GetTimeButtonEmote()
+        {
+            return Emote.Parse($"<:{TimeButtonEmojiName}:{TimeButtonEmojiId}>");
+        }
+
+        public static string BuildSpecificTimeMessage(LocalTime time, string specifiedTime, IUser user)
+        {
+            return $"At _{specifiedTime}_ your time, it will be **{FormatTime(time)}** in {user.Username}'s time.";
+        }
+
+        public static string BuildTimeMessage(ZonedDateTime time)
+        {
+            var emoji = $"{GetEmojiForTime(time.TimeOfDay)}";
+            return $"{emoji} **{FormatTime(time.TimeOfDay)}** on **{FormatDay(time)}**";
         }
     }
 }

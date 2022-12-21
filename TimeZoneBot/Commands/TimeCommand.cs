@@ -1,6 +1,5 @@
 ﻿using System.Text.RegularExpressions;
 using DiscordDotNetUtilities.Interfaces;
-using NodaTime;
 using TimeZoneBot.BusinessLayer;
 using TimeZoneBot.BusinessLayer.Interfaces;
 using TimeZoneBot.Models.Exceptions;
@@ -48,7 +47,7 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
                     return;
                 }
 
-                var message = BuildTimeMessage(time.Value);
+                var message = TimeHelpers.BuildTimeMessage(time.Value);
                 await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"Current Time for {user.Username}",
                     message, Context.User));
             }
@@ -64,7 +63,7 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
                 var time = await _timeZoneBusinessLayer.GetSpecificTimeForPerson(user.Id, Context.User.Id,
                     specifiedTime);
 
-                var message = BuildSpecificTimeMessage(time.TimeOfDay, specifiedTime, user);
+                var message = TimeHelpers.BuildSpecificTimeMessage(time.TimeOfDay, specifiedTime, user);
                 await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed(
                     $"Specific Time Request for {user.Username}",
                     message, Context.User));
@@ -96,17 +95,6 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
         }
     }
 
-    private static string BuildSpecificTimeMessage(LocalTime time, string specifiedTime, IUser user)
-    {
-        return $"At _{specifiedTime}_ your time, it will be **{TimeHelpers.FormatTime(time)}** in {user.Username}'s time.";
-    }
-
-    private static string BuildTimeMessage(ZonedDateTime time)
-    {
-        var emoji = $"{TimeHelpers.GetEmojiForTime(time.TimeOfDay)}";
-        return $"{emoji} **{TimeHelpers.FormatTime(time.TimeOfDay)}** on **{TimeHelpers.FormatDay(time)}**";
-    }
-
     [MessageCommand("Get User's Current Time")]
     public async Task TimeMessageCommand(SocketMessage message)
     {
@@ -124,7 +112,7 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
                 return;
             }
 
-            var messageToSend = BuildTimeMessage(time.Value);
+            var messageToSend = TimeHelpers.BuildTimeMessage(time.Value);
             await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"Current Time for {user.Username}",
                 messageToSend, Context.User));
         }
@@ -163,7 +151,7 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
                 return;
             }
 
-            var messageToSend = BuildTimeMessage(time.Value);
+            var messageToSend = TimeHelpers.BuildTimeMessage(time.Value);
             await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"Current Time for {user.Username}",
                 messageToSend, Context.User));
         }

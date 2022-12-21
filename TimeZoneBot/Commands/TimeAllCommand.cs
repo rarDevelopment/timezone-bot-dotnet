@@ -53,7 +53,7 @@ public class TimeAllCommand : InteractionModuleBase<SocketInteractionContext>
             }
         }
 
-        var messagesToSend = userTimes.OrderBy(t => t.Value.ToInstant())
+        var messagesToSend = userTimes.OrderBy(t => t.Value.Offset)
             .Select(userTime => BuildTimeMessage(userTime.Value, userTime.Key));
         var messageToSend = string.Join("\n", messagesToSend);
 

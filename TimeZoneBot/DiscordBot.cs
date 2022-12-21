@@ -68,6 +68,8 @@ namespace TimeZoneBot
         private void SetEvents()
         {
             _client.MessageReceived += msg => Publish(new MessageReceivedNotification(msg));
+            _client.ReactionAdded += (cacheableMessage, cacheableChannel, reaction) =>
+                Publish(new ReactionAddedNotification(cacheableMessage, cacheableChannel, reaction));
         }
 
         private Task Publish<TEvent>(TEvent @event) where TEvent : INotification
