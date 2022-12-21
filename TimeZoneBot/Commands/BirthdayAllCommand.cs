@@ -112,17 +112,32 @@ public class BirthdayAllCommand : InteractionModuleBase<SocketInteractionContext
     {
         await DeferAsync();
         var members = Context.Guild.Users.Where(u => u.GetPermissions(Context.Channel as IGuildChannel).ViewChannel && !u.IsBot);
-        if (!Enum.TryParse(typeof(BirthdaySortOrder), sortingTypeParam, out var sortingType))
+        if (!Enum.TryParse(typeof(BirthdaySortOrder), sortingTypeParam, out var sortingTypeParsed))
         {
             _logger.LogError("Error in SortButton, could not parse sort type.");
             return;
         }
 
-        var message = await BuildAllBirthdaysMessage(members, (BirthdaySortOrder)sortingType!);
-        var buttonBuilder = new ComponentBuilder()
-            .WithButton("Sort By Age", $"birthdaySort:{BirthdaySortOrder.SortByAge}", emote: new Emoji("🧓🏼"))
-            .WithButton("Sort By Next Birthday", $"birthdaySort:{BirthdaySortOrder.SortByNextBirthday}", emote: new Emoji("➡️"));
-        await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed("Birthdays", message, Context.User), components: buttonBuilder.Build());
+        var birthdaySortOrderType = (BirthdaySortOrder)sortingTypeParsed!;
+        var message = await BuildAllBirthdaysMessage(members, birthdaySortOrderType);
+        await Context.Interaction.ModifyOriginalResponseAsync(properties =>
+        {
+            properties.Embed =
+                _discordFormatter.BuildRegularEmbed($"Birthdays ({ParseSortByName(birthdaySortOrderType)})",
+                    message, Context.User);
+        });
+
+    }
+
+    private static string ParseSortByName(BirthdaySortOrder birthdaySortOrder)
+    {
+        return birthdaySortOrder switch
+        {
+            BirthdaySortOrder.SortByAge => "Sorted by Age",
+            BirthdaySortOrder.SortByNextBirthday => "Sorted by Next Birthday",
+            BirthdaySortOrder.NoSort => "Sorted Alphabetically",
+            _ => ""
+        };
     }
 
     private static string BuildBirthdayMessage(LocalDate birthday, IUser user)
