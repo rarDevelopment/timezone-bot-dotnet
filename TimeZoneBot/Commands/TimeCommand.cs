@@ -26,7 +26,7 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
 
     public async Task TimeSlashCommand(
         [Summary("User", "The user whose current time will be shown")] IUser user,
-        [Summary("Time", "The specific time in your time zone that you'd like to know in the other person's time zone.")] string? specifiedTime)
+        [Summary("Time", "The specific time in your time zone that you'd like to know in the other person's time zone.")] string? specifiedTime = null)
     {
         var member = Context.Guild.Users.FirstOrDefault(u => u.Id == Context.User.Id);
         if (member == null)
