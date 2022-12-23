@@ -30,6 +30,7 @@ public class SetTimeZoneCommand : InteractionModuleBase<SocketInteractionContext
         if (member == null)
         {
             await RespondAsync("That user is not a valid member of this server.");
+            return;
         }
 
         await DeferAsync();

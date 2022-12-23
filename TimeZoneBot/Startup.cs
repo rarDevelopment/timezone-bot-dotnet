@@ -68,7 +68,10 @@ builder.ConfigureServices((host, services) =>
 
     services.AddScoped<ITimeZoneBusinessLayer, TimeZoneBusinessLayer>();
     services.AddScoped<IBirthdayBusinessLayer, BirthdayBusinessLayer>();
+    services.AddScoped<IConfigurationBusinessLayer, ConfigurationBusinessLayer>();
+
     services.AddScoped<IPersonDataLayer, PersonDataLayer>();
+    services.AddScoped<IConfigurationDataLayer, ConfigurationDataLayer>();
 
     IClock clock = SystemClock.Instance;
     services.AddTransient(_ => clock);
