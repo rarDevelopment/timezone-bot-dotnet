@@ -83,15 +83,15 @@ public class BirthdayCommand : InteractionModuleBase<SocketInteractionContext>
 
         try
         {
-            var time = await _birthdayBusinessLayer.GetBirthdayForPerson(user.Id);
-            if (time == null)
+            var birthdayForPerson = await _birthdayBusinessLayer.GetBirthdayForPerson(user.Id);
+            if (birthdayForPerson == null)
             {
                 await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Error Finding Time",
                     "Could not find time for person.", Context.User));
                 return;
             }
 
-            var messageToSend = BuildBirthdayMessage(time.Value);
+            var messageToSend = BuildBirthdayMessage(birthdayForPerson.Value);
             await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"{user.Username}'s Birthday",
                 messageToSend, Context.User));
         }
@@ -122,15 +122,15 @@ public class BirthdayCommand : InteractionModuleBase<SocketInteractionContext>
 
         try
         {
-            var time = await _birthdayBusinessLayer.GetBirthdayForPerson(user.Id);
-            if (time == null)
+            var birthdayForPerson = await _birthdayBusinessLayer.GetBirthdayForPerson(user.Id);
+            if (birthdayForPerson == null)
             {
                 await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Error Finding Time",
                     "Could not find time for person.", Context.User));
                 return;
             }
 
-            var messageToSend = BuildBirthdayMessage(time.Value);
+            var messageToSend = BuildBirthdayMessage(birthdayForPerson.Value);
             await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"{user.Username} 's Birthday",
                 messageToSend, Context.User));
         }

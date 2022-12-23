@@ -1,6 +1,7 @@
 ﻿using NodaTime;
 using NodaTime.Text;
 using System.Text.RegularExpressions;
+using Discord;
 using TimeZoneBot.BusinessLayer.Interfaces;
 using TimeZoneBot.DataLayer;
 using TimeZoneBot.Models.Exceptions;
@@ -81,8 +82,18 @@ public class TimeZoneBusinessLayer : ITimeZoneBusinessLayer
         var requesterTimeZoned = requesterTime.InZoneLeniently(requesterTimeZone);
 
         var targetTime = requesterTimeZoned.ToInstant().InZone(targetTimeZone);
-
         return targetTime;
+    }
+
+    public async Task<bool> SetTimeZone(IUser user, string timeZone)
+    {
+        var person = await _personDataLayer.GetPerson(user.Id);
+        if (person == null)
+        {
+            throw new PersonNotFoundException(user.Id);
+        }
+
+        return await _personDataLayer.SetTimeZone(user.Id, timeZone);
     }
 
     private static string CleanTime(string time)

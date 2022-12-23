@@ -21,9 +21,20 @@ public class PersonDataLayer : IPersonDataLayer
         var person = await _personCollection.Find(filter).FirstOrDefaultAsync();
         return person?.ToDomain();
     }
-}
 
-public interface IPersonDataLayer
-{
-    Task<Person?> GetPerson(ulong userId);
+    public async Task<bool> SetTimeZone(ulong userId, string timeZone)
+    {
+        var filter = Builders<PersonEntity>.Filter.Eq("snowflake", userId.ToString());
+        var update = Builders<PersonEntity>.Update.Set(person => person.TimeZone, timeZone);
+        var updateResult = await _personCollection.UpdateOneAsync(filter, update);
+        return updateResult.MatchedCount == 1;
+    }
+
+    public async Task<bool> SetBirthday(ulong userId, string birthday)
+    {
+        var filter = Builders<PersonEntity>.Filter.Eq("snowflake", userId.ToString());
+        var update = Builders<PersonEntity>.Update.Set(person => person.Birthday, birthday);
+        var updateResult = await _personCollection.UpdateOneAsync(filter, update);
+        return updateResult.MatchedCount == 1;
+    }
 }
