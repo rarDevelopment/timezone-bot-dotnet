@@ -61,8 +61,14 @@ builder.ConfigureServices((host, services) =>
         Name = host.Configuration["Database:Name"],
     };
 
+    var versionSettings = new VersionSettings
+    {
+        VersionNumber = host.Configuration["Version:VersionNumber"]
+    };
+
     services.AddSingleton(discordSettings);
     services.AddSingleton(databaseSettings);
+    services.AddSingleton(versionSettings);
 
     services.AddScoped<IDiscordFormatter, DiscordFormatter>();
 
