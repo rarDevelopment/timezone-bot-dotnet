@@ -20,10 +20,15 @@ public class MessageReceivedNotificationHandler : INotificationHandler<MessageRe
         _ = Task.Run(async () =>
         {
             var message = notification.Message;
-
-            var regex = new Regex(TimeHelpers.TimeRegexPattern);
-            var match = regex.IsMatch(message.Content);
             
+            if (message.Author.IsBot)
+            {
+                return Task.CompletedTask;
+            }
+
+            var regex = new Regex(TimeHelpers.TimeRegexPattern, RegexOptions.IgnoreCase);
+            var match = regex.IsMatch(message.Content);
+
             if (!match)
             {
                 return Task.CompletedTask;
