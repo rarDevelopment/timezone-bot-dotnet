@@ -26,17 +26,22 @@ public class BirthdayAllCommand : InteractionModuleBase<SocketInteractionContext
 
     [SlashCommand("birthday-all", "Get the birthday for the specified user in their time zone.")]
 
-    public async Task BirthdayAllSlashCommand()
+    public async Task BirthdayAllSlashCommand(
+        [Summary("sort-by", "The method by which to sort the birthday list (defaults to Alphabetical sort by username)")] BirthdaySortOrder sortBy = BirthdaySortOrder.Alphabetical
+    )
     {
         var members = Context.Guild.Users.Where(u => u.GetPermissions(Context.Channel as IGuildChannel).ViewChannel && !u.IsBot);
 
         await DeferAsync();
 
-        var message = await BuildAllBirthdaysMessage(members, BirthdaySortOrder.NoSort);
+        var message = await BuildAllBirthdaysMessage(members, sortBy);
 
         var buttonBuilder = new ComponentBuilder()
             .WithButton("Sort By Age", $"birthdaySort:{BirthdaySortOrder.SortByAge}", emote: new Emoji("🧓🏼"))
-            .WithButton("Sort By Next Birthday", $"birthdaySort:{BirthdaySortOrder.SortByNextBirthday}", emote: new Emoji("➡️"));
+            .WithButton("Sort By Next Birthday", $"birthdaySort:{BirthdaySortOrder.SortByNextBirthday}",
+                emote: new Emoji("⏭️"))
+            .WithButton("Sort Alphabetically", $"birthdaySort:{BirthdaySortOrder.Alphabetical}",
+                emote: new Emoji("🔤"));
 
         await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed("Birthdays", message, Context.User), components: buttonBuilder.Build());
     }
@@ -86,7 +91,7 @@ public class BirthdayAllCommand : InteractionModuleBase<SocketInteractionContext
                     return lenientBirthday;
                 });
                 break;
-            case BirthdaySortOrder.NoSort:
+            case BirthdaySortOrder.Alphabetical:
             default:
                 orderedBirthdays = userBirthdays.OrderBy(u => u.Key.Username);
                 break;
@@ -126,7 +131,6 @@ public class BirthdayAllCommand : InteractionModuleBase<SocketInteractionContext
                 _discordFormatter.BuildRegularEmbed($"Birthdays ({ParseSortByName(birthdaySortOrderType)})",
                     message, Context.User);
         });
-
     }
 
     private static string ParseSortByName(BirthdaySortOrder birthdaySortOrder)
@@ -135,7 +139,7 @@ public class BirthdayAllCommand : InteractionModuleBase<SocketInteractionContext
         {
             BirthdaySortOrder.SortByAge => "Sorted by Age",
             BirthdaySortOrder.SortByNextBirthday => "Sorted by Next Birthday",
-            BirthdaySortOrder.NoSort => "Sorted Alphabetically",
+            BirthdaySortOrder.Alphabetical => "Sorted Alphabetically",
             _ => ""
         };
     }

@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using Discord;
 using DiscordDotNetUtilities.Interfaces;
 using MediatR;
 using TimeZoneBot.BusinessLayer;
@@ -10,14 +11,17 @@ namespace TimeZoneBot.EventHandlers;
 public class ReactionAddedNotificationHandler : INotificationHandler<ReactionAddedNotification>
 {
     private readonly ITimeZoneBusinessLayer _timeZoneBusinessLayer;
+    private readonly IConfigurationBusinessLayer _configurationBusinessLayer;
     private readonly ILogger<DiscordBot> _logger;
     private readonly IDiscordFormatter _discordFormatter;
 
     public ReactionAddedNotificationHandler(ITimeZoneBusinessLayer timeZoneBusinessLayer,
+        IConfigurationBusinessLayer configurationBusinessLayer,
         ILogger<DiscordBot> logger,
         IDiscordFormatter discordFormatter)
     {
         _timeZoneBusinessLayer = timeZoneBusinessLayer;
+        _configurationBusinessLayer = configurationBusinessLayer;
         _logger = logger;
         _discordFormatter = discordFormatter;
     }
@@ -28,6 +32,17 @@ public class ReactionAddedNotificationHandler : INotificationHandler<ReactionAdd
             var reaction = notification.Reaction;
 
             if (!Equals(reaction.Emote, TimeHelpers.GetTimeButtonEmote()))
+            {
+                return Task.CompletedTask;
+            }
+
+            if (notification.Reaction.Channel is not IGuildChannel guildChannel)
+            {
+                return Task.CompletedTask;
+            }
+
+            var config = await _configurationBusinessLayer.GetConfiguration(guildChannel.Guild);
+            if (!config.EnableReactions)
             {
                 return Task.CompletedTask;
             }
@@ -62,6 +77,7 @@ public class ReactionAddedNotificationHandler : INotificationHandler<ReactionAdd
                 _logger.LogError(ex, "Error in ReactionAddedNotificationHandler");
                 await message.ReplyAsync(embed: _discordFormatter.BuildErrorEmbed("Error!",
                     "There was an error retrieving the time(s) for that user. Make sure the user has set up their timezone."), allowedMentions: AllowedMentions.None);
+                return Task.CompletedTask;
             }
 
             var messageToSend = string.Join("\n", timeMessages);

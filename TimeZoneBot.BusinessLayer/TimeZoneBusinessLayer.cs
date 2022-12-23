@@ -123,7 +123,9 @@ public class TimeZoneBusinessLayer : ITimeZoneBusinessLayer
 
         cleanedTime = multipleSpacesRegex.Replace(cleanedTime, " ");
 
-        return cleanedTime;
+        return LocalTimePattern.CreateWithInvariantCulture(TimeHelpers.TimeFormatNoMinutes).Parse(cleanedTime).TryGetValue(new LocalTime(), out var shortTimeParsed)
+            ? shortTimeParsed.ToString("h:mm tt", new System.Globalization.DateTimeFormatInfo())
+            : cleanedTime;
     }
 
     private static ZonedDateTime GetTimeInTimeZone(DateTimeZone timeZone, Instant timeInstantToConvert)

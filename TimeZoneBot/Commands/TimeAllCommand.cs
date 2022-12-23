@@ -24,10 +24,10 @@ public class TimeAllCommand : InteractionModuleBase<SocketInteractionContext>
     [SlashCommand("time-all", "Get the current time for the all users in their respective time zones.")]
     public async Task TimeAllSlashCommand(
         [Summary("Time", "The specific time in your time zone for which you'd like to see everyone's times in their time zone.")] string? specifiedTime = null
-        )
+    )
     {
-        var members = Context.Guild.Users.Where(u => u.GetPermissions(Context.Channel as IGuildChannel).ViewChannel && !u.IsBot);
-        
+        var members = Context.Guild.Users.Where(u => u.GetPermissions(Context.Channel as IGuildChannel).ViewChannel && !u.IsBot).ToList();
+
         await DeferAsync();
 
         Dictionary<IUser, ZonedDateTime> userTimes = new();
