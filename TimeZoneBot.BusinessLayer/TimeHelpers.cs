@@ -61,7 +61,7 @@ namespace TimeZoneBot.BusinessLayer
 
         public static string BuildSpecificTimeMessage(LocalTime time, string specifiedTime, IUser user)
         {
-            return $"At _{specifiedTime}_ your time, it will be **{FormatTime(time)}** in {user.Username}'s time.";
+            return $"At `{specifiedTime}` your time, it will be **{FormatTime(time)}** in {user.Username}'s time.";
         }
 
         public static string BuildTimeMessage(ZonedDateTime time)

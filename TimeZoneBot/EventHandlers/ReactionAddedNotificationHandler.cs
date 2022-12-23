@@ -47,7 +47,7 @@ public class ReactionAddedNotificationHandler : INotificationHandler<ReactionAdd
                 return Task.CompletedTask;
             }
 
-            var regex = new Regex(TimeHelpers.TimeRegexPattern);
+            var regex = new Regex(TimeHelpers.TimeRegexPattern, RegexOptions.IgnoreCase);
 
             var message = await notification.Message.GetOrDownloadAsync();
 
