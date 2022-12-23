@@ -23,8 +23,7 @@ public class MessageReceivedNotificationHandler : INotificationHandler<MessageRe
 
             var regex = new Regex(TimeHelpers.TimeRegexPattern);
             var match = regex.IsMatch(message.Content);
-
-            // TODO: check for configuration options for enabling the reaction settings
+            
             if (!match)
             {
                 return Task.CompletedTask;

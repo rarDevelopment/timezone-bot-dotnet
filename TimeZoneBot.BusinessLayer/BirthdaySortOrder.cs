@@ -2,7 +2,7 @@
 {
     public enum BirthdaySortOrder
     {
-        NoSort,
+        Alphabetical,
         SortByAge,
         SortByNextBirthday,
     }

@@ -96,7 +96,7 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
         }
     }
 
-    [MessageCommand("Get User's Current Time")]
+    [MessageCommand("Get User's Time")]
     public async Task TimeMessageCommand(SocketMessage message)
     {
         var user = message.Author;
@@ -137,7 +137,7 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
         }
     }
 
-    [UserCommand("Get User's Current Time")]
+    [UserCommand("Get User's Time")]
     public async Task TimeUserCommand(SocketUser user)
     {
         await DeferAsync();
