@@ -1,5 +1,4 @@
 ﻿using System.Text.RegularExpressions;
-using Discord;
 using DiscordDotNetUtilities.Interfaces;
 using MediatR;
 using TimeZoneBot.BusinessLayer;
@@ -66,10 +65,12 @@ public class ReactionAddedNotificationHandler : INotificationHandler<ReactionAdd
             {
                 foreach (Match match in matches)
                 {
-                    var timeForPerson =
-                        await _timeZoneBusinessLayer.GetSpecificTimeForPerson(message.Author.Id, reaction.UserId,
-                            match.Value);
-                    timeMessages.Add(TimeHelpers.BuildSpecificTimeMessage(timeForPerson.TimeOfDay, match.Value, message.Author));
+                    var personSayingTimeId = message.Author.Id;
+                    var personReactingId = reaction.UserId;
+                    // Note: this might seem flipped, because you are reacting on the time a person said, rather than specifying a time yourself
+                    var specifiedTime = match.Value.Trim();
+                    var timeForPerson = await _timeZoneBusinessLayer.GetSpecificTimeForPerson(personReactingId, personSayingTimeId, specifiedTime);
+                    timeMessages.Add(TimeHelpers.BuildSpecificTimeReactionMessage(timeForPerson.TimeOfDay, specifiedTime, message.Author));
                 }
             }
             catch (Exception ex)
