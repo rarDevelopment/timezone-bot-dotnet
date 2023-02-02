@@ -86,7 +86,7 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
         {
             _logger.LogError(ex, "NoTimeZone in TimeSlashCommand");
             await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Time Zone Not Found",
-                "The associated time zone was not valid.", Context.User));
+                "No time zone was configured for this user. Use /set-time-zone.", Context.User));
         }
         catch (Exception ex)
         {
