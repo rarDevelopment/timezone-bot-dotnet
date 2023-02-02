@@ -17,7 +17,7 @@ public class PersonDataLayer : IPersonDataLayer
     }
     public async Task<Person?> GetPerson(ulong userId)
     {
-        var filter = Builders<PersonEntity>.Filter.Eq("snowflake", userId.ToString());
+        var filter = Builders<PersonEntity>.Filter.Eq("snowflake", userId);
         var person = await _personCollection.Find(filter).FirstOrDefaultAsync();
         if (person != null)
         {
@@ -35,7 +35,7 @@ public class PersonDataLayer : IPersonDataLayer
         {
             return false;
         }
-        var filter = Builders<PersonEntity>.Filter.Eq("snowflake", userId.ToString());
+        var filter = Builders<PersonEntity>.Filter.Eq("snowflake", userId);
         var update = Builders<PersonEntity>.Update.Set(p => p.TimeZone, timeZone);
         var updateResult = await _personCollection.UpdateOneAsync(filter, update);
         return updateResult.MatchedCount == 1;
@@ -48,8 +48,8 @@ public class PersonDataLayer : IPersonDataLayer
         {
             return false;
         }
-        var filter = Builders<PersonEntity>.Filter.Eq("snowflake", userId.ToString());
-        var update = Builders<PersonEntity>.Update.Set(person => person.Birthday, birthday);
+        var filter = Builders<PersonEntity>.Filter.Eq("snowflake", userId);
+        var update = Builders<PersonEntity>.Update.Set(p => p.Birthday, birthday);
         var updateResult = await _personCollection.UpdateOneAsync(filter, update);
         return updateResult.MatchedCount == 1;
     }
