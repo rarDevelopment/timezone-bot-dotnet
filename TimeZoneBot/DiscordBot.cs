@@ -1,6 +1,9 @@
 ﻿using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Sgbj.Cron;
+using TimeZoneBot.EventHandlers;
+using TimeZoneBot.Models;
 using TimeZoneBot.Notifications;
 
 namespace TimeZoneBot
@@ -12,6 +15,7 @@ namespace TimeZoneBot
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly ILogger _logger;
         private readonly InteractionHandler _interactionHandler;
+        private readonly BirthdayCheckHandler _birthdayCheckHandler;
         private readonly DiscordSettings _discordSettings;
         private readonly CancellationToken _cancellationToken;
 
@@ -20,6 +24,7 @@ namespace TimeZoneBot
             IServiceScopeFactory serviceScopeFactory,
             ILogger<DiscordBot> logger,
             InteractionHandler interactionHandler,
+            BirthdayCheckHandler birthdayCheckHandler,
             DiscordSettings discordSettings)
         {
             _client = client;
@@ -27,6 +32,7 @@ namespace TimeZoneBot
             _serviceScopeFactory = serviceScopeFactory;
             _logger = logger;
             _interactionHandler = interactionHandler;
+            _birthdayCheckHandler = birthdayCheckHandler;
             _discordSettings = discordSettings;
             _cancellationToken = new CancellationTokenSource().Token;
         }
@@ -56,6 +62,14 @@ namespace TimeZoneBot
             await _client.SetActivityAsync(new Game("Use / commands!", ActivityType.Watching));
 
             await _client.StartAsync();
+
+            // birthday timer setup
+            using var timer = new CronTimer("*/1 * * * *", TimeZoneInfo.Local);
+
+            while (await timer.WaitForNextTickAsync(stoppingToken))
+            {
+                await _birthdayCheckHandler.HandleBirthdayCheck();
+            }
         }
 
         private async Task ClientReady()

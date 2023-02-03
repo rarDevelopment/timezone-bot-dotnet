@@ -15,6 +15,7 @@ using TimeZoneBot;
 using TimeZoneBot.BusinessLayer;
 using TimeZoneBot.BusinessLayer.Interfaces;
 using TimeZoneBot.DataLayer;
+using TimeZoneBot.EventHandlers;
 using TimeZoneBot.Models;
 
 var builder = new HostBuilder();
@@ -51,7 +52,8 @@ builder.ConfigureServices((host, services) =>
 
     var discordSettings = new DiscordSettings
     {
-        BotToken = host.Configuration["Discord:BotToken"]
+        BotToken = host.Configuration["Discord:BotToken"],
+        HourForBirthdayAnnouncements = Convert.ToInt32(host.Configuration["Discord:HourForBirthdayAnnouncements"]),
     };
     var databaseSettings = new DatabaseSettings
     {
@@ -75,6 +77,8 @@ builder.ConfigureServices((host, services) =>
     services.AddScoped<ITimeZoneBusinessLayer, TimeZoneBusinessLayer>();
     services.AddScoped<IBirthdayBusinessLayer, BirthdayBusinessLayer>();
     services.AddScoped<IConfigurationBusinessLayer, ConfigurationBusinessLayer>();
+
+    services.AddScoped<BirthdayCheckHandler>();
 
     services.AddScoped<IPersonDataLayer, PersonDataLayer>();
     services.AddScoped<IConfigurationDataLayer, ConfigurationDataLayer>();
