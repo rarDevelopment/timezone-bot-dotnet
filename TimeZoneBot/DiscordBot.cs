@@ -63,6 +63,11 @@ namespace TimeZoneBot
 
             await _client.StartAsync();
 
+            await SetUpSchedules(stoppingToken);
+        }
+
+        private async Task SetUpSchedules(CancellationToken stoppingToken)
+        {
             // birthday timer setup
             using var timer = new CronTimer("*/1 * * * *", TimeZoneInfo.Local);
 
