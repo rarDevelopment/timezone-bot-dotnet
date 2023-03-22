@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using Discord;
 using TimeZoneBot.BusinessLayer.Interfaces;
 using TimeZoneBot.DataLayer;
+using TimeZoneBot.Models;
 using TimeZoneBot.Models.Exceptions;
 
 namespace TimeZoneBot.BusinessLayer;
@@ -21,12 +22,8 @@ public class TimeZoneBusinessLayer : ITimeZoneBusinessLayer
 
     public async Task<ZonedDateTime?> GetTimeForPerson(ulong userId)
     {
-        var person = await _personDataLayer.GetPerson(userId);
-        if (person == null)
-        {
-            throw new PersonNotFoundException(userId);
-        }
-        var timeZone = person.TimeZone != null ? DateTimeZoneProviders.Tzdb.GetZoneOrNull(person.TimeZone) : null;
+        var person = await GetPerson(userId);
+        var timeZone = person!.TimeZone != null ? DateTimeZoneProviders.Tzdb.GetZoneOrNull(person.TimeZone) : null;
         if (timeZone == null)
         {
             throw new NoTimeZoneException(userId);
@@ -34,6 +31,23 @@ public class TimeZoneBusinessLayer : ITimeZoneBusinessLayer
 
         var timeForPerson = GetTimeInTimeZone(timeZone, _clock.GetCurrentInstant());
         return timeForPerson;
+    }
+
+    public ZonedDateTime GetTimeInTimeZone(string timeZoneName)
+    {
+        var timeZone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(timeZoneName) ?? null;
+        if (timeZone == null)
+        {
+            throw new NoTimeZoneException(timeZoneName);
+        }
+        var timeInTimeZone = GetTimeInTimeZone(timeZone, _clock.GetCurrentInstant());
+        return timeInTimeZone;
+    }
+
+    private async Task<Person?> GetPerson(ulong userId)
+    {
+        var person = await _personDataLayer.GetPerson(userId);
+        return person;
     }
 
     public async Task<ZonedDateTime> GetSpecificTimeForPerson(ulong targetUserId, ulong requesterUserId, string time)

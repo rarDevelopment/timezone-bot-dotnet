@@ -39,6 +39,14 @@ namespace TimeZoneBot.DataLayer
             return updateResult.MatchedCount == 1;
         }
 
+        public async Task<bool> SetDefaultTimeZone(ulong guildId, string timeZone)
+        {
+            var filter = Builders<ConfigurationEntity>.Filter.Eq("guildId", guildId.ToString());
+            var update = Builders<ConfigurationEntity>.Update.Set(config => config.DefaultTimeZone, timeZone);
+            var updateResult = await _configurationCollection.UpdateOneAsync(filter, update);
+            return updateResult.MatchedCount == 1;
+        }
+
         private async Task InitGuildConfiguration(ulong guildId, string guildName)
         {
             await _configurationCollection.InsertOneAsync(new ConfigurationEntity
@@ -46,6 +54,7 @@ namespace TimeZoneBot.DataLayer
                 GuildId = guildId,
                 GuildName = guildName,
                 EnableReactions = true,
+                DefaultTimeZone = null
             });
         }
     }

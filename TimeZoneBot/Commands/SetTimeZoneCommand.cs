@@ -23,7 +23,7 @@ public class SetTimeZoneCommand : InteractionModuleBase<SocketInteractionContext
 
     [SlashCommand("set-time-zone", "Set your time zone.")]
     public async Task SetTimeZoneSlashCommand(
-        [Summary("timezone", "Time Zone name (visit https://nodatime.org/TimeZones and choose a Zone ID).")]
+        [Summary("time-zone", "Time Zone name (visit https://nodatime.org/TimeZones and choose a Zone ID).")]
         string timeZoneName)
     {
         var member = Context.Guild.Users.FirstOrDefault(u => u.Id == Context.User.Id);

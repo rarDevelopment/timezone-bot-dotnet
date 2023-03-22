@@ -1,5 +1,7 @@
-﻿using TimeZoneBot.BusinessLayer.Interfaces;
+﻿using NodaTime;
+using TimeZoneBot.BusinessLayer.Interfaces;
 using TimeZoneBot.Models;
+using TimeZoneBot.Models.Exceptions;
 
 namespace TimeZoneBot.EventHandlers
 {
@@ -8,16 +10,19 @@ namespace TimeZoneBot.EventHandlers
         private readonly DiscordSocketClient _client;
         private readonly ITimeZoneBusinessLayer _timeZoneBusinessLayer;
         private readonly IBirthdayBusinessLayer _birthdayBusinessLayer;
+        private readonly IConfigurationBusinessLayer _configurationBusinessLayer;
         private readonly DiscordSettings _discordSettings;
 
         public BirthdayCheckHandler(DiscordSocketClient client,
             ITimeZoneBusinessLayer timeZoneBusinessLayer,
             IBirthdayBusinessLayer birthdayBusinessLayer,
+            IConfigurationBusinessLayer configurationBusinessLayer,
             DiscordSettings discordSettings)
         {
             _client = client;
             _timeZoneBusinessLayer = timeZoneBusinessLayer;
             _birthdayBusinessLayer = birthdayBusinessLayer;
+            _configurationBusinessLayer = configurationBusinessLayer;
             _discordSettings = discordSettings;
         }
 
@@ -40,11 +45,28 @@ namespace TimeZoneBot.EventHandlers
                 {
                     continue;
                 }
-                var timeForUser = await _timeZoneBusinessLayer.GetTimeForPerson(member.Id);
+
+                ZonedDateTime? timeForUser;
+                try
+                {
+                    timeForUser = await _timeZoneBusinessLayer.GetTimeForPerson(member.Id);
+                }
+                catch (NoTimeZoneException)
+                {
+                    var configuration = await _configurationBusinessLayer.GetConfiguration(guild);
+                    var defaultTimeZone = configuration.DefaultTimeZone;
+                    if (defaultTimeZone == null)
+                    {
+                        continue;
+                    }
+                    timeForUser = _timeZoneBusinessLayer.GetTimeInTimeZone(defaultTimeZone);
+                }
+
                 if (timeForUser == null)
                 {
                     continue;
                 }
+
                 if (timeForUser.Value.Day == birthdayToCheck.Value.Day
                     && timeForUser.Value.Month == birthdayToCheck.Value.Month
                     && timeForUser.Value.Hour == _discordSettings.HourForBirthdayAnnouncements)
