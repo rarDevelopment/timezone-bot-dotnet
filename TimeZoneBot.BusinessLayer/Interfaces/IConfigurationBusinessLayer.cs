@@ -7,5 +7,6 @@ namespace TimeZoneBot.BusinessLayer.Interfaces
     {
         Task<Configuration> GetConfiguration(IGuild guild);
         Task<bool> SetReactionsEnabled(IGuild guild, bool isEnabled);
+        Task<bool> SetDefaultTimeZone(IGuild guild, string timeZone);
     }
 }

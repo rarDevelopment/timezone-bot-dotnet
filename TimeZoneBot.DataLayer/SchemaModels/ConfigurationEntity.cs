@@ -22,13 +22,16 @@ public class ConfigurationEntity
     [BsonElement("enableReactions")]
     public bool EnableReactions { get; set; }
 
+    public string? DefaultTimeZone { get; set; }
+
     public Configuration ToDomain()
     {
         return new Configuration
         {
             GuildId = GuildId,
             GuildName = GuildName,
-            EnableReactions = EnableReactions
+            EnableReactions = EnableReactions,
+            DefaultTimeZone = DefaultTimeZone,
         };
     }
 }

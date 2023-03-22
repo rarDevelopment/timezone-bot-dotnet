@@ -28,4 +28,14 @@ public class ConfigurationBusinessLayer : IConfigurationBusinessLayer
         }
         return false;
     }
+
+    public async Task<bool> SetDefaultTimeZone(IGuild guild, string timeZone)
+    {
+        Configuration? config = await _configurationDataLayer.GetConfigurationForGuild(guild.Id, guild.Name);
+        if (config != null)
+        {
+            return await _configurationDataLayer.SetDefaultTimeZone(guild.Id, timeZone);
+        }
+        return false;
+    }
 }
