@@ -23,7 +23,7 @@ public class SetTimeZoneCommand : InteractionModuleBase<SocketInteractionContext
 
     [SlashCommand("set-time-zone", "Set your time zone.")]
     public async Task SetTimeZoneSlashCommand(
-        [Summary("time-zone", "Time Zone name (visit https://nodatime.org/TimeZones and choose a Zone ID).")]
+        [Summary("time-zone", "Time Zone name (visit https://rardk64.com/timezones/ and set your time zone there).")]
         string timeZoneName)
     {
         var member = Context.Guild.Users.FirstOrDefault(u => u.Id == Context.User.Id);
@@ -39,7 +39,7 @@ public class SetTimeZoneCommand : InteractionModuleBase<SocketInteractionContext
         if (timeZone == null)
         {
             await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Invalid Time Zone",
-                "The provided time zone was not valid. Please visit https://nodatime.org/TimeZones and choose a time zone from the Zone ID column.",
+                "The provided time zone was not valid. Please visit https://rardk64.com/timezones/ and set your time zone there, or copy it and set it here..",
                 member));
             return;
         }
