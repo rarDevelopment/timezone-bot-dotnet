@@ -24,7 +24,7 @@ public class BirthdayAllCommand : InteractionModuleBase<SocketInteractionContext
         _logger = logger;
     }
 
-    [SlashCommand("birthday-all", "Get the birthday for the specified user in their time zone.")]
+    [SlashCommand("birthday-all", "Get the birthdays for all users.")]
 
     public async Task BirthdayAllSlashCommand(
         [Summary("sort-by", "The method by which to sort the birthday list (defaults to Alphabetical sort by username)")] BirthdaySortOrder sortBy = BirthdaySortOrder.Alphabetical
