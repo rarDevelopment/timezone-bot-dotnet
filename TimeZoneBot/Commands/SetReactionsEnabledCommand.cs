@@ -18,6 +18,7 @@ public class SetReactionsEnabledCommand : InteractionModuleBase<SocketInteractio
         _logger = logger;
     }
 
+    [DefaultMemberPermissions(GuildPermission.Administrator)]
     [SlashCommand("set-reactions", "Set time reactions on/off.")]
     public async Task SetReactionsEnabledSlashCommand(
         [Summary("enabled", "True for ON, False for OFF")] bool isEnabled

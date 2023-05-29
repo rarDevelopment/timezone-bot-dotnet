@@ -19,6 +19,7 @@ public class SetDefaultTimeZoneCommand : InteractionModuleBase<SocketInteraction
         _logger = logger;
     }
 
+    [DefaultMemberPermissions(GuildPermission.Administrator)]
     [SlashCommand("set-default-time-zone", "Set the default time zone for birthday checks when members have not set their time zone.")]
     public async Task SetDefaultTimeZoneSlashCommand(
         [Summary("time-zone", "Time Zone ID (visit https://rardk64.com/timezones/ and set your time zone there).")] string timeZoneName

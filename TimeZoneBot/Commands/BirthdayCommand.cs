@@ -21,10 +21,10 @@ public class BirthdayCommand : InteractionModuleBase<SocketInteractionContext>
         _logger = logger;
     }
 
-    [SlashCommand("birthday", "Get the birthday for the specified user in their time zone.")]
+    [SlashCommand("birthday", "Get the birthday for the specified user.")]
 
     public async Task BirthdaySlashCommand(
-        [Summary("User", "The user whose current time will be shown")]
+        [Summary("User", "The user whose birthday will be shown")]
         IUser user)
     {
         var member = Context.Guild.Users.FirstOrDefault(u => u.Id == Context.User.Id);
