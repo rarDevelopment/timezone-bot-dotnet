@@ -1,17 +1,19 @@
-# TimeZone Bot
+# TimeZoneBot
 
-TimeZone Bot has 2 main features:
+TimeZoneBot has 2 main features:
 
 - Converting times between time zones for users in your Discord
 - Checking users birthdays (and a birthday post on their birthday)
 
+Now written in C# and .NET 7.
+
 ## Links
 
-[Invite TimeZone Bot to your Discord Server](https://discord.com/api/oauth2/authorize?client_id=736720417166721105&permissions=414464859200&scope=bot%20applications.commands)
+[Invite TimeZoneBot to your Discord Server](https://discord.com/api/oauth2/authorize?client_id=736720417166721105&permissions=414464859200&scope=bot%20applications.commands)
 
 [Discord Support Server](https://discord.gg/Za4NAtJJ9v)
 
-![TimeZone Bot](https://github.com/rarDevelopment/timezone-bot-dotnet/assets/4060573/52f12fc5-6d37-4e6f-91a1-8493097d71cd)
+![TimeZoneBot](https://github.com/rarDevelopment/timezone-bot-dotnet/assets/4060573/52f12fc5-6d37-4e6f-91a1-8493097d71cd)
 
 ## Getting Started
 
@@ -24,14 +26,14 @@ TimeZone Bot has 2 main features:
 
 - Browse to https://rardk64.com/
 - Click "Log in with Discord" and log in using your Discord account
-- In the TimeZone Bot section, tap the "Settings" button
+- In the TimeZoneBot section, tap the "Settings" button
 - Search for your time zone, and either click the "Set" button to set it immediately, or use the copy icon button to copy it and use it with either the `/set-time-zone` or `/set-default-time-zone` commands in Discord.
 
 ![image](https://github.com/rarDevelopment/timezone-bot-dotnet/assets/4060573/b5fc9202-a091-4adb-a197-29a653c67213)
 
 ## Time Reactions
 
-When TimeZone Bot detects a valid time in a user's message, it will react with a "Time" emote reaction. If you tap that reaction, TimeZone Bot will respond with that time converted to your time. You must have your time zone set up for this to work.
+When TimeZoneBot detects a valid time in a user's message, it will react with a "Time" emote reaction. If you tap that reaction, TimeZoneBot will respond with that time converted to your time. You must have your time zone set up for this to work.
 
 ![Time Reaction](https://github.com/rarDevelopment/timezone-bot-dotnet/assets/4060573/cb8686ce-49ca-430c-b99c-7be4d0a342a3)
 
@@ -94,4 +96,3 @@ Get the birthdays for all users. You can also specify a method by which to sort 
 Set your birthday.
 
 ---
-
