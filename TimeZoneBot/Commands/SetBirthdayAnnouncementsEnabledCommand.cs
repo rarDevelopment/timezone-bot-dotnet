@@ -3,13 +3,13 @@ using TimeZoneBot.BusinessLayer.Interfaces;
 
 namespace TimeZoneBot.Commands;
 
-public class SetReactionsEnabledCommand : InteractionModuleBase<SocketInteractionContext>
+public class SetBirthdayAnnouncementsEnabledCommand : InteractionModuleBase<SocketInteractionContext>
 {
     private readonly IConfigurationBusinessLayer _configurationBusinessLayer;
     private readonly IDiscordFormatter _discordFormatter;
     private readonly ILogger<DiscordBot> _logger;
 
-    public SetReactionsEnabledCommand(IConfigurationBusinessLayer configurationBusinessLayer,
+    public SetBirthdayAnnouncementsEnabledCommand(IConfigurationBusinessLayer configurationBusinessLayer,
         IDiscordFormatter discordFormatter,
         ILogger<DiscordBot> logger)
     {
@@ -19,7 +19,7 @@ public class SetReactionsEnabledCommand : InteractionModuleBase<SocketInteractio
     }
 
     [DefaultMemberPermissions(GuildPermission.Administrator)]
-    [SlashCommand("set-reactions", "Set time reactions on/off.")]
+    [SlashCommand("set-birthday-announcements", "Set birthday announcements on/off.")]
     public async Task SetReactionsEnabledSlashCommand(
         [Summary("enabled", "True for ON, False for OFF")] bool isEnabled
         )
@@ -39,17 +39,17 @@ public class SetReactionsEnabledCommand : InteractionModuleBase<SocketInteractio
 
         await DeferAsync();
 
-        var wasSet = await _configurationBusinessLayer.SetReactionsEnabled(Context.Guild, isEnabled);
+        var wasSet = await _configurationBusinessLayer.SetBirthdayAnnouncementsEnabled(Context.Guild, isEnabled);
 
         if (!wasSet)
         {
-            _logger.LogError($"Failed to set EnableReactions to {isEnabled} - SetReactionsEnabled returned false.");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Failed to Set Time Reactions Configuration",
+            _logger.LogError($"Failed to set EnableBirthdayAnnouncements to {isEnabled} - SetReactionsEnabled returned false.");
+            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Failed to Set Birthday Announcements Configuration",
                 "There was an error changing that setting.", Context.User));
             return;
         }
 
-        await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed("Time Reactions Configuration Set Successfully",
-            $"Time Reactions are **{(isEnabled ? "ON" : "OFF")}**", Context.User));
+        await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed("Birthday Announcements Configuration Set Successfully",
+            $"Birthday Announcements are **{(isEnabled ? "ON" : "OFF")}**", Context.User));
     }
 }

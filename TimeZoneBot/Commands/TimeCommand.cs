@@ -38,9 +38,10 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
 
         try
         {
+            var targetUserId = user.Id.ToString();
             if (string.IsNullOrEmpty(specifiedTime))
             {
-                var time = await _timeZoneBusinessLayer.GetTimeForPerson(user.Id);
+                var time = await _timeZoneBusinessLayer.GetTimeForPerson(targetUserId);
                 if (time == null)
                 {
                     await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Error Finding Time",
@@ -49,7 +50,7 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
                 }
 
                 var message = TimeHelpers.BuildTimeMessage(time.Value);
-                await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"Current Time for {user.Username}",
+                await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"Current Time for {user.GetNameToDisplay()}",
                     message, Context.User));
             }
             else
@@ -61,12 +62,14 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
                         "The time provided was not a valid time format.", user));
                 }
 
-                var time = await _timeZoneBusinessLayer.GetSpecificTimeForPerson(user.Id, Context.User.Id,
+                var requesterUserId = Context.User.Id.ToString();
+
+                var time = await _timeZoneBusinessLayer.GetSpecificTimeForPerson(targetUserId, requesterUserId,
                     specifiedTime);
 
                 var message = TimeHelpers.BuildSpecificTimeMessage(time.TimeOfDay, specifiedTime, user);
                 await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed(
-                    $"Specific Time Request for {user.Username}",
+                    $"Specific Time Request for {user.GetNameToDisplay()}",
                     message, Context.User));
             }
         }
@@ -105,7 +108,7 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
 
         try
         {
-            var time = await _timeZoneBusinessLayer.GetTimeForPerson(user.Id);
+            var time = await _timeZoneBusinessLayer.GetTimeForPerson(user.Id.ToString());
             if (time == null)
             {
                 await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Error Finding Time",
@@ -114,7 +117,7 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
             }
 
             var messageToSend = TimeHelpers.BuildTimeMessage(time.Value);
-            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"Current Time for {user.Username}",
+            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"Current Time for {user.GetNameToDisplay()}",
                 messageToSend, Context.User));
         }
         catch (PersonNotFoundException ex)
@@ -144,7 +147,7 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
 
         try
         {
-            var time = await _timeZoneBusinessLayer.GetTimeForPerson(user.Id);
+            var time = await _timeZoneBusinessLayer.GetTimeForPerson(user.Id.ToString());
             if (time == null)
             {
                 await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Error Finding Time",
@@ -153,7 +156,7 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
             }
 
             var messageToSend = TimeHelpers.BuildTimeMessage(time.Value);
-            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"Current Time for {user.Username}",
+            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"Current Time for {user.GetNameToDisplay()}",
                 messageToSend, Context.User));
         }
         catch (PersonNotFoundException ex)

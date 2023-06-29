@@ -20,7 +20,7 @@ public class TimeZoneBusinessLayer : ITimeZoneBusinessLayer
         _clock = clock;
     }
 
-    public async Task<ZonedDateTime?> GetTimeForPerson(ulong userId)
+    public async Task<ZonedDateTime?> GetTimeForPerson(string userId)
     {
         var person = await GetPerson(userId);
         var timeZone = person!.TimeZone != null ? DateTimeZoneProviders.Tzdb.GetZoneOrNull(person.TimeZone) : null;
@@ -44,13 +44,13 @@ public class TimeZoneBusinessLayer : ITimeZoneBusinessLayer
         return timeInTimeZone;
     }
 
-    private async Task<Person?> GetPerson(ulong userId)
+    private async Task<Person?> GetPerson(string userId)
     {
         var person = await _personDataLayer.GetPerson(userId);
         return person;
     }
 
-    public async Task<ZonedDateTime> GetSpecificTimeForPerson(ulong targetUserId, ulong requesterUserId, string time)
+    public async Task<ZonedDateTime> GetSpecificTimeForPerson(string targetUserId, string requesterUserId, string time)
     {
         var targetPerson = await _personDataLayer.GetPerson(targetUserId);
         if (targetPerson == null)
@@ -101,13 +101,14 @@ public class TimeZoneBusinessLayer : ITimeZoneBusinessLayer
 
     public async Task<bool> SetTimeZone(IUser user, string timeZone)
     {
-        var person = await _personDataLayer.GetPerson(user.Id);
+        var userId = user.Id.ToString();
+        var person = await _personDataLayer.GetPerson(userId);
         if (person == null)
         {
-            throw new PersonNotFoundException(user.Id);
+            throw new PersonNotFoundException(userId);
         }
 
-        return await _personDataLayer.SetTimeZone(user.Id, timeZone);
+        return await _personDataLayer.SetTimeZone(userId, timeZone);
     }
 
     private static string CleanTime(string time)

@@ -65,8 +65,8 @@ public class ReactionAddedNotificationHandler : INotificationHandler<ReactionAdd
             {
                 foreach (Match match in matches)
                 {
-                    var personSayingTimeId = message.Author.Id;
-                    var personReactingId = reaction.UserId;
+                    var personSayingTimeId = message.Author.Id.ToString();
+                    var personReactingId = reaction.UserId.ToString();
                     // Note: this might seem flipped, because you are reacting on the time a person said, rather than specifying a time yourself
                     var specifiedTime = match.Value.Trim();
                     var timeForPerson = await _timeZoneBusinessLayer.GetSpecificTimeForPerson(personReactingId, personSayingTimeId, specifiedTime);
@@ -77,7 +77,7 @@ public class ReactionAddedNotificationHandler : INotificationHandler<ReactionAdd
             {
                 _logger.LogError(ex, "Error in ReactionAddedNotificationHandler");
                 await message.ReplyAsync(embed: _discordFormatter.BuildErrorEmbed("Error!",
-                    "There was an error retrieving the time(s) for that user. Make sure the user has set up their timezone."), allowedMentions: AllowedMentions.None);
+                    "There was an error retrieving the time(s) for that user. Make sure the user has set up their timezone.", reactingUser), allowedMentions: AllowedMentions.None);
                 return Task.CompletedTask;
             }
 

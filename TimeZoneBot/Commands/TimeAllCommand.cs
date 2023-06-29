@@ -36,9 +36,12 @@ public class TimeAllCommand : InteractionModuleBase<SocketInteractionContext>
         {
             try
             {
+                var requesterUserId = Context.User.Id.ToString();
+                var targetUserId = user.Id.ToString();
+
                 var time = !string.IsNullOrEmpty(specifiedTime)
-                    ? await _timeZoneBusinessLayer.GetSpecificTimeForPerson(user.Id, Context.User.Id, specifiedTime)
-                    : await _timeZoneBusinessLayer.GetTimeForPerson(user.Id);
+                    ? await _timeZoneBusinessLayer.GetSpecificTimeForPerson(targetUserId, requesterUserId, specifiedTime)
+                    : await _timeZoneBusinessLayer.GetTimeForPerson(targetUserId);
                 if (time == null)
                 {
                     continue;
@@ -67,6 +70,6 @@ public class TimeAllCommand : InteractionModuleBase<SocketInteractionContext>
     private static string BuildTimeMessage(ZonedDateTime time, IUser user)
     {
         var emoji = $"{TimeHelpers.GetEmojiForTime(time.TimeOfDay)}";
-        return $"{emoji} **{user.Username}**'s current time is **{TimeHelpers.FormatTime(time.TimeOfDay)}** ({TimeHelpers.FormatDay(time)})";
+        return $"{emoji} **{user.GetNameToDisplay()}**'s current time is **{TimeHelpers.FormatTime(time.TimeOfDay)}** ({TimeHelpers.FormatDay(time)})";
     }
 }
