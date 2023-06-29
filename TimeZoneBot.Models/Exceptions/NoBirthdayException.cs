@@ -1,7 +1,6 @@
-﻿namespace TimeZoneBot.Models.Exceptions
+﻿namespace TimeZoneBot.Models.Exceptions;
+
+public class NoBirthdayException : Exception
 {
-    public class NoBirthdayException : Exception
-    {
-        public NoBirthdayException(ulong userId) : base($"No birthday found for user with id: {userId}") { }
-    }
+    public NoBirthdayException(string userId) : base($"No birthday found for user with id: {userId}") { }
 }

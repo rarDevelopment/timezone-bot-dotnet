@@ -1,8 +1,7 @@
-﻿namespace TimeZoneBot.Models
+﻿namespace TimeZoneBot.Models;
+
+public class DiscordSettings
 {
-    public class DiscordSettings
-    {
-        public string? BotToken { get; set; }
-        public int? HourForBirthdayAnnouncements { get; set; }
-    }
+    public string? BotToken { get; set; }
+    public int? HourForBirthdayAnnouncements { get; set; }
 }

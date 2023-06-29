@@ -56,7 +56,7 @@ public class SetTimeZoneCommand : InteractionModuleBase<SocketInteractionContext
 
         try
         {
-            var time = await _timeZoneBusinessLayer.GetTimeForPerson(Context.User.Id);
+            var time = await _timeZoneBusinessLayer.GetTimeForPerson(Context.User.Id.ToString());
             if (time == null)
             {
                 await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Error Finding Time",

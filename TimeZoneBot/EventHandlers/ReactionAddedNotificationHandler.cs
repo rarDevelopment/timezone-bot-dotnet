@@ -65,8 +65,8 @@ public class ReactionAddedNotificationHandler : INotificationHandler<ReactionAdd
             {
                 foreach (Match match in matches)
                 {
-                    var personSayingTimeId = message.Author.Id;
-                    var personReactingId = reaction.UserId;
+                    var personSayingTimeId = message.Author.Id.ToString();
+                    var personReactingId = reaction.UserId.ToString();
                     // Note: this might seem flipped, because you are reacting on the time a person said, rather than specifying a time yourself
                     var specifiedTime = match.Value.Trim();
                     var timeForPerson = await _timeZoneBusinessLayer.GetSpecificTimeForPerson(personReactingId, personSayingTimeId, specifiedTime);

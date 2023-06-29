@@ -1,9 +1,8 @@
-﻿namespace TimeZoneBot.BusinessLayer
+﻿namespace TimeZoneBot.BusinessLayer;
+
+public enum BirthdaySortOrder
 {
-    public enum BirthdaySortOrder
-    {
-        Alphabetical,
-        SortByAge,
-        SortByNextBirthday,
-    }
+    Alphabetical,
+    SortByAge,
+    SortByNextBirthday,
 }

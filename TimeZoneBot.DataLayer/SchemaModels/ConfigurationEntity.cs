@@ -14,7 +14,7 @@ public class ConfigurationEntity
     public string Id { get; set; }
 
     [BsonElement("guildId")]
-    public ulong GuildId { get; set; }
+    public string GuildId { get; set; }
 
     [BsonElement("guildName")]
     public string GuildName { get; set; }
@@ -22,7 +22,11 @@ public class ConfigurationEntity
     [BsonElement("enableReactions")]
     public bool EnableReactions { get; set; }
 
+    [BsonElement("defaultTimeZone")]
     public string? DefaultTimeZone { get; set; }
+
+    [BsonElement("enableBirthdayAnnouncements")]
+    public bool EnableBirthdayAnnouncements { get; set; }
 
     public Configuration ToDomain()
     {
@@ -31,6 +35,7 @@ public class ConfigurationEntity
             GuildId = GuildId,
             GuildName = GuildName,
             EnableReactions = EnableReactions,
+            EnableBirthdayAnnouncements = EnableBirthdayAnnouncements,
             DefaultTimeZone = DefaultTimeZone,
         };
     }

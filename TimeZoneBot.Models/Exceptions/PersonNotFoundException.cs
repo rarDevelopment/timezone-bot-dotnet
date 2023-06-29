@@ -2,5 +2,5 @@
 
 public class PersonNotFoundException : Exception
 {
-    public PersonNotFoundException(ulong userId) : base($"No Person found with User ID: {userId}") { }
+    public PersonNotFoundException(string userId) : base($"No Person found with User ID: {userId}") { }
 }

@@ -38,7 +38,7 @@ public class BirthdayCommand : InteractionModuleBase<SocketInteractionContext>
 
         try
         {
-            var birthday = await _birthdayBusinessLayer.GetBirthdayForPerson(user.Id);
+            var birthday = await _birthdayBusinessLayer.GetBirthdayForPerson(user.Id.ToString());
             if (birthday == null)
             {
                 await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Error Finding Birthday",
@@ -84,7 +84,7 @@ public class BirthdayCommand : InteractionModuleBase<SocketInteractionContext>
 
         try
         {
-            var birthdayForPerson = await _birthdayBusinessLayer.GetBirthdayForPerson(user.Id);
+            var birthdayForPerson = await _birthdayBusinessLayer.GetBirthdayForPerson(user.Id.ToString());
             if (birthdayForPerson == null)
             {
                 await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Error Finding Time",
@@ -123,7 +123,7 @@ public class BirthdayCommand : InteractionModuleBase<SocketInteractionContext>
 
         try
         {
-            var birthdayForPerson = await _birthdayBusinessLayer.GetBirthdayForPerson(user.Id);
+            var birthdayForPerson = await _birthdayBusinessLayer.GetBirthdayForPerson(user.Id.ToString());
             if (birthdayForPerson == null)
             {
                 await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Error Finding Time",

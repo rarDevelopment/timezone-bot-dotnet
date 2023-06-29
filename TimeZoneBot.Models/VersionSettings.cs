@@ -1,7 +1,6 @@
-﻿namespace TimeZoneBot.Models
+﻿namespace TimeZoneBot.Models;
+
+public class VersionSettings
 {
-    public class VersionSettings
-    {
-        public string? VersionNumber { get; set; }
-    }
+    public string? VersionNumber { get; set; }
 }

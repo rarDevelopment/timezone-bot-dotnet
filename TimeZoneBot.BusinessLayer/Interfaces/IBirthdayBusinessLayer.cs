@@ -5,6 +5,6 @@ namespace TimeZoneBot.BusinessLayer.Interfaces;
 
 public interface IBirthdayBusinessLayer
 {
-    Task<LocalDate?> GetBirthdayForPerson(ulong userId);
+    Task<LocalDate?> GetBirthdayForPerson(string userId);
     Task<bool> SetBirthday(IUser user, LocalDate birthday);
 }

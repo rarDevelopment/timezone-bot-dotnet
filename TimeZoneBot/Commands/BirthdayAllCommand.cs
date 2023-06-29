@@ -55,7 +55,7 @@ public class BirthdayAllCommand : InteractionModuleBase<SocketInteractionContext
         {
             try
             {
-                var birthday = await _birthdayBusinessLayer.GetBirthdayForPerson(user.Id);
+                var birthday = await _birthdayBusinessLayer.GetBirthdayForPerson(user.Id.ToString());
                 if (birthday == null)
                 {
                     continue;
