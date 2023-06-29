@@ -50,7 +50,7 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
                 }
 
                 var message = TimeHelpers.BuildTimeMessage(time.Value);
-                await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"Current Time for {user.Username}",
+                await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"Current Time for {user.GetNameToDisplay()}",
                     message, Context.User));
             }
             else
@@ -69,7 +69,7 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
 
                 var message = TimeHelpers.BuildSpecificTimeMessage(time.TimeOfDay, specifiedTime, user);
                 await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed(
-                    $"Specific Time Request for {user.Username}",
+                    $"Specific Time Request for {user.GetNameToDisplay()}",
                     message, Context.User));
             }
         }
@@ -117,7 +117,7 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
             }
 
             var messageToSend = TimeHelpers.BuildTimeMessage(time.Value);
-            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"Current Time for {user.Username}",
+            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"Current Time for {user.GetNameToDisplay()}",
                 messageToSend, Context.User));
         }
         catch (PersonNotFoundException ex)
@@ -156,7 +156,7 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
             }
 
             var messageToSend = TimeHelpers.BuildTimeMessage(time.Value);
-            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"Current Time for {user.Username}",
+            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"Current Time for {user.GetNameToDisplay()}",
                 messageToSend, Context.User));
         }
         catch (PersonNotFoundException ex)

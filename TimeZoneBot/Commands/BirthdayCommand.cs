@@ -47,7 +47,7 @@ public class BirthdayCommand : InteractionModuleBase<SocketInteractionContext>
             }
 
             var message = BuildBirthdayMessage(birthday.Value);
-            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"{user.Username}'s Birthday",
+            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"{user.GetNameToDisplay()}'s Birthday",
                 message, Context.User));
         }
         catch (PersonNotFoundException ex)
@@ -93,7 +93,7 @@ public class BirthdayCommand : InteractionModuleBase<SocketInteractionContext>
             }
 
             var messageToSend = BuildBirthdayMessage(birthdayForPerson.Value);
-            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"{user.Username}'s Birthday",
+            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"{user.GetNameToDisplay()}'s Birthday",
                 messageToSend, Context.User));
         }
         catch (PersonNotFoundException ex)
@@ -132,7 +132,7 @@ public class BirthdayCommand : InteractionModuleBase<SocketInteractionContext>
             }
 
             var messageToSend = BuildBirthdayMessage(birthdayForPerson.Value);
-            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"{user.Username} 's Birthday",
+            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"{user.GetNameToDisplay()} 's Birthday",
                 messageToSend, Context.User));
         }
         catch (PersonNotFoundException ex)

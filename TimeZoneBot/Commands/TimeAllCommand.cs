@@ -70,6 +70,6 @@ public class TimeAllCommand : InteractionModuleBase<SocketInteractionContext>
     private static string BuildTimeMessage(ZonedDateTime time, IUser user)
     {
         var emoji = $"{TimeHelpers.GetEmojiForTime(time.TimeOfDay)}";
-        return $"{emoji} **{user.Username}**'s current time is **{TimeHelpers.FormatTime(time.TimeOfDay)}** ({TimeHelpers.FormatDay(time)})";
+        return $"{emoji} **{user.GetNameToDisplay()}**'s current time is **{TimeHelpers.FormatTime(time.TimeOfDay)}** ({TimeHelpers.FormatDay(time)})";
     }
 }

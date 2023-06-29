@@ -61,12 +61,12 @@ public static class TimeHelpers
 
     public static string BuildSpecificTimeMessage(LocalTime time, string specifiedTime, IUser user)
     {
-        return $"At `{specifiedTime}` your time, it will be **{FormatTime(time)}** in {user.Username}'s time.";
+        return $"At `{specifiedTime}` your time, it will be **{FormatTime(time)}** in {user.GetNameToDisplay()}'s time.";
     }
 
     public static string BuildSpecificTimeReactionMessage(LocalTime time, string specifiedTime, IUser user)
     {
-        return $"At `{specifiedTime}` in {user.Username}'s time, it will be **{FormatTime(time)}** in your time.";
+        return $"At `{specifiedTime}` in {user.GetNameToDisplay()}'s time, it will be **{FormatTime(time)}** in your time.";
     }
 
     public static string BuildTimeMessage(ZonedDateTime time)

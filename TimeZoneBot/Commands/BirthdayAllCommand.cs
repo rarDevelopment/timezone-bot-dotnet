@@ -93,7 +93,7 @@ public class BirthdayAllCommand : InteractionModuleBase<SocketInteractionContext
                 break;
             case BirthdaySortOrder.Alphabetical:
             default:
-                orderedBirthdays = userBirthdays.OrderBy(u => u.Key.Username);
+                orderedBirthdays = userBirthdays.OrderBy(u => u.Key.GetNameToDisplay());
                 break;
         }
 
@@ -104,7 +104,7 @@ public class BirthdayAllCommand : InteractionModuleBase<SocketInteractionContext
 
     private static LocalDate GetLenientBirthday(AnnualDate annualDate, int year)
     {
-        if (annualDate.Month == 2 && annualDate.Day == 29)
+        if (annualDate is { Month: 2, Day: 29 })
         {
             return new LocalDate(year, 2, 28);
         }
@@ -123,7 +123,7 @@ public class BirthdayAllCommand : InteractionModuleBase<SocketInteractionContext
             return;
         }
 
-        var birthdaySortOrderType = (BirthdaySortOrder)sortingTypeParsed!;
+        var birthdaySortOrderType = (BirthdaySortOrder)sortingTypeParsed;
         var message = await BuildAllBirthdaysMessage(members, birthdaySortOrderType);
         await Context.Interaction.ModifyOriginalResponseAsync(properties =>
         {
@@ -146,6 +146,6 @@ public class BirthdayAllCommand : InteractionModuleBase<SocketInteractionContext
 
     private static string BuildBirthdayMessage(LocalDate birthday, IUser user)
     {
-        return $"🎈 **{user.Username}**'s birthday is on **{BirthdayHelpers.FormatBirthday(birthday, true)}**";
+        return $"🎈 **{user.GetNameToDisplay()}**'s birthday is on **{BirthdayHelpers.FormatBirthday(birthday, true)}**";
     }
 }

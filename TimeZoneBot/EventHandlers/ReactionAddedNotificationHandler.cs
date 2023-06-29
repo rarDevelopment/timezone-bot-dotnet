@@ -77,7 +77,7 @@ public class ReactionAddedNotificationHandler : INotificationHandler<ReactionAdd
             {
                 _logger.LogError(ex, "Error in ReactionAddedNotificationHandler");
                 await message.ReplyAsync(embed: _discordFormatter.BuildErrorEmbed("Error!",
-                    "There was an error retrieving the time(s) for that user. Make sure the user has set up their timezone."), allowedMentions: AllowedMentions.None);
+                    "There was an error retrieving the time(s) for that user. Make sure the user has set up their timezone.", reactingUser), allowedMentions: AllowedMentions.None);
                 return Task.CompletedTask;
             }
 
