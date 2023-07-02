@@ -29,7 +29,7 @@ Now written in C# and .NET 7.
 - In the TimeZoneBot section, tap the "Settings" button
 - Search for your time zone, and either click the "Set" button to set it immediately, or use the copy icon button to copy it and use it with either the `/set-time-zone` or `/set-default-time-zone` commands in Discord.
 
-![image](https://github.com/rarDevelopment/timezone-bot-dotnet/assets/4060573/b5fc9202-a091-4adb-a197-29a653c67213)
+![image](https://github.com/rarDevelopment/timezone-bot-dotnet/assets/4060573/03e1ba34-ab22-49bb-8f9c-950f95c4e19f)
 
 ## Time Reactions
 
@@ -94,5 +94,11 @@ Get the birthdays for all users. You can also specify a method by which to sort 
 `/set-birthday`
 
 Set your birthday.
+
+---
+
+`/set-birthday-announcements`*
+
+Set birthday announcements for the server on/off.
 
 ---
