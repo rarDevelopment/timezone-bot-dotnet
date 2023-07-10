@@ -69,7 +69,7 @@ public class DiscordBot : BackgroundService
     private async Task SetUpSchedules(CancellationToken stoppingToken)
     {
         // birthday timer setup
-        using var timer = new CronTimer("*/1 * * * *", TimeZoneInfo.Local);
+        using var timer = new CronTimer("1 * * * *", TimeZoneInfo.Local);
 
         while (await timer.WaitForNextTickAsync(stoppingToken))
         {
