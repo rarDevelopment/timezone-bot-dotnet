@@ -7,7 +7,7 @@ namespace TimeZoneBot.BusinessLayer;
 public static class TimeHelpers
 {
     public const string TimeRegexPattern =
-        "(([0-1]?[0-9]|2[0-3]):[0-5][0-9]( |)(am|pm|)|([0-1]?[0-9]|2[0-3])( |)(am|pm))";
+        @"\b(([0-1]?[0-9]|2[0-3]):[0-5][0-9]( |)([ap]\.?m\.?)?|([0-1]?[0-9]|2[0-3])( |)([ap]\.?m\.?))\b";
     public const string TimeFormat = "h:mm tt";
     public const string TimeFormatNoMinutes = "h tt";
     public const string TimeFormat24Hour = "H:mm";
@@ -17,7 +17,7 @@ public static class TimeHelpers
 
     public static bool HasMeridiem(Meridiem meridiem, string time)
     {
-        return time.ToLower().Contains(meridiem.ToString().ToLower());
+        return time.Replace(".", "").ToLower().Contains(meridiem.ToString().ToLower());
     }
 
     public static bool HasAnyMeridiem(string time)

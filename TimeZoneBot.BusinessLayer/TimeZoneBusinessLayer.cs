@@ -114,18 +114,12 @@ public class TimeZoneBusinessLayer : ITimeZoneBusinessLayer
     private static string CleanTime(string time)
     {
         var multipleSpacesRegex = new Regex("[ ]{2,}");
-        var cleanedTime = time.Trim();
-        var meridiemFound = Meridiem.NoMeridiem;
+        var cleanedTime = time.Replace(".", "").Trim();
 
         var allMeridiems = TimeHelpers.GetAllMeridiems();
 
-        foreach (var meridiem in allMeridiems)
-        {
-            if (TimeHelpers.HasMeridiem(meridiem, time))
-            {
-                meridiemFound = meridiem;
-            }
-        }
+        var meridiemFound = allMeridiems.FirstOrDefault(meridiem => TimeHelpers.HasMeridiem(meridiem, cleanedTime));
+
         var indexOfMeridiem = cleanedTime.IndexOf(meridiemFound.ToString(), StringComparison.InvariantCultureIgnoreCase);
 
         if (meridiemFound != Meridiem.NoMeridiem && indexOfMeridiem > 0) //accounts for -1 meaning none found and AM or PM not in the first position (which would not be valid time anyway)
