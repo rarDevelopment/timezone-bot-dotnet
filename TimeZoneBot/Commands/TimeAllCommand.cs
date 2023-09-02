@@ -62,7 +62,7 @@ public class TimeAllCommand : InteractionModuleBase<SocketInteractionContext>
 
         if (!string.IsNullOrEmpty(messageToSend))
         {
-            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed("Current Time for Everyone in this Channel",
+            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbedWithUserFooter("Current Time for Everyone in this Channel",
             messageToSend, Context.User));
         }
     }

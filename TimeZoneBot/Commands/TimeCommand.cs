@@ -44,13 +44,13 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
                 var time = await _timeZoneBusinessLayer.GetTimeForPerson(targetUserId);
                 if (time == null)
                 {
-                    await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Error Finding Time",
+                    await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Error Finding Time",
                         "Could not find time for person.", Context.User));
                     return;
                 }
 
                 var message = TimeHelpers.BuildTimeMessage(time.Value);
-                await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"Current Time for {user.GetNameToDisplay()}",
+                await FollowupAsync(embed: _discordFormatter.BuildRegularEmbedWithUserFooter($"Current Time for {user.GetNameToDisplay()}",
                     message, Context.User));
             }
             else
@@ -58,7 +58,7 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
                 var timeRegex = new Regex(TimeHelpers.TimeRegexPattern, RegexOptions.IgnoreCase);
                 if (!timeRegex.IsMatch(specifiedTime))
                 {
-                    await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Error with Provided Time",
+                    await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Error with Provided Time",
                         "The time provided was not a valid time format.", user));
                 }
 
@@ -68,7 +68,7 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
                     specifiedTime);
 
                 var message = TimeHelpers.BuildSpecificTimeMessage(time.TimeOfDay, specifiedTime, user);
-                await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed(
+                await FollowupAsync(embed: _discordFormatter.BuildRegularEmbedWithUserFooter(
                     $"Specific Time Request for {user.GetNameToDisplay()}",
                     message, Context.User));
             }
@@ -76,25 +76,25 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
         catch (MissingMeridiemException ex)
         {
             _logger.LogError(ex, "MissingMeridiem in TimeSlashCommand");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Missing Meridiem",
+            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Missing Meridiem",
                 "You must specify AM or PM.", Context.User));
         }
         catch (PersonNotFoundException ex)
         {
             _logger.LogError(ex, "PersonNotFound in TimeSlashCommand");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Person Not Found",
+            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Person Not Found",
                 "That person wasn't found!", Context.User));
         }
         catch (NoTimeZoneException ex)
         {
             _logger.LogError(ex, "NoTimeZone in TimeSlashCommand");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Time Zone Not Found",
+            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Time Zone Not Found",
                 "No time zone was configured for this user. Use /set-time-zone.", Context.User));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unhandled error in TimeSlashCommand");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Something Went Wrong",
+            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Something Went Wrong",
                 "There was an unexpected error.", Context.User));
         }
     }
@@ -111,31 +111,31 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
             var time = await _timeZoneBusinessLayer.GetTimeForPerson(user.Id.ToString());
             if (time == null)
             {
-                await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Error Finding Time",
+                await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Error Finding Time",
                     "Could not find time for person.", Context.User));
                 return;
             }
 
             var messageToSend = TimeHelpers.BuildTimeMessage(time.Value);
-            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"Current Time for {user.GetNameToDisplay()}",
+            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbedWithUserFooter($"Current Time for {user.GetNameToDisplay()}",
                 messageToSend, Context.User));
         }
         catch (PersonNotFoundException ex)
         {
             _logger.LogError(ex, "PersonNotFound in TimeMessageCommand");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Person Not Found",
+            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Person Not Found",
                 "That person wasn't found!", Context.User));
         }
         catch (NoTimeZoneException ex)
         {
             _logger.LogError(ex, "NoTimeZone in TimeMessageCommand");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Time Zone Not Found",
+            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Time Zone Not Found",
                 "The associated time zone was not valid.", Context.User));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unhandled error in TimeMessageCommand");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Something Went Wrong",
+            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Something Went Wrong",
                 "There was an unexpected error.", Context.User));
         }
     }
@@ -150,31 +150,31 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
             var time = await _timeZoneBusinessLayer.GetTimeForPerson(user.Id.ToString());
             if (time == null)
             {
-                await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Error Finding Time",
+                await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Error Finding Time",
                     "Could not find time for person.", Context.User));
                 return;
             }
 
             var messageToSend = TimeHelpers.BuildTimeMessage(time.Value);
-            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"Current Time for {user.GetNameToDisplay()}",
+            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbedWithUserFooter($"Current Time for {user.GetNameToDisplay()}",
                 messageToSend, Context.User));
         }
         catch (PersonNotFoundException ex)
         {
             _logger.LogError(ex, "PersonNotFound in TimeUserCommand");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Person Not Found",
+            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Person Not Found",
                 "That person wasn't found!", Context.User));
         }
         catch (NoTimeZoneException ex)
         {
             _logger.LogError(ex, "NoTimeZone in TimeUserCommand");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Time Zone Not Found",
+            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Time Zone Not Found",
                 "The associated time zone was not valid.", Context.User));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unhandled error in TimeUserCommand");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Something Went Wrong",
+            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Something Went Wrong",
                 "There was an unexpected error.", Context.User));
         }
     }

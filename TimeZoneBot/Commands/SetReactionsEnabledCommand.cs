@@ -44,12 +44,12 @@ public class SetReactionsEnabledCommand : InteractionModuleBase<SocketInteractio
         if (!wasSet)
         {
             _logger.LogError($"Failed to set EnableReactions to {isEnabled} - SetReactionsEnabled returned false.");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Failed to Set Time Reactions Configuration",
+            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Failed to Set Time Reactions Configuration",
                 "There was an error changing that setting.", Context.User));
             return;
         }
 
-        await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed("Time Reactions Configuration Set Successfully",
+        await FollowupAsync(embed: _discordFormatter.BuildRegularEmbedWithUserFooter("Time Reactions Configuration Set Successfully",
             $"Time Reactions are **{(isEnabled ? "ON" : "OFF")}**", Context.User));
     }
 }

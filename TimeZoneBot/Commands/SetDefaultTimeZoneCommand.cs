@@ -43,7 +43,7 @@ public class SetDefaultTimeZoneCommand : InteractionModuleBase<SocketInteraction
         var timeZone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(timeZoneName);
         if (timeZone == null)
         {
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Invalid Time Zone",
+            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Invalid Time Zone",
                 "The provided time zone was not valid. Please visit https://rardk64.com/timezones/ and set your time zone there, or copy it and set it here.",
                 member));
             return;
@@ -54,12 +54,12 @@ public class SetDefaultTimeZoneCommand : InteractionModuleBase<SocketInteraction
         if (!wasSet)
         {
             _logger.LogError($"Failed to set DefaultTimeZone to {timeZoneName} - SetDefaultTimeZone returned false.");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Failed to Set Time Reactions Configuration",
+            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Failed to Set Time Reactions Configuration",
                 "There was an error changing that setting.", Context.User));
             return;
         }
 
-        await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed("Default Time Zone Set Successfully",
+        await FollowupAsync(embed: _discordFormatter.BuildRegularEmbedWithUserFooter("Default Time Zone Set Successfully",
             $"Server Default Time Zone is set to **{timeZoneName}**", Context.User));
     }
 }

@@ -41,31 +41,31 @@ public class BirthdayCommand : InteractionModuleBase<SocketInteractionContext>
             var birthday = await _birthdayBusinessLayer.GetBirthdayForPerson(user.Id.ToString());
             if (birthday == null)
             {
-                await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Error Finding Birthday",
+                await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Error Finding Birthday",
                     "Could not find birthday for person.", Context.User));
                 return;
             }
 
             var message = BuildBirthdayMessage(birthday.Value);
-            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"{user.GetNameToDisplay()}'s Birthday",
+            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbedWithUserFooter($"{user.GetNameToDisplay()}'s Birthday",
                 message, Context.User));
         }
         catch (PersonNotFoundException ex)
         {
             _logger.LogError(ex, "PersonNotFound in BirthdaySlashCommand");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Person Not Found",
+            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Person Not Found",
                 "That person wasn't found!", Context.User));
         }
         catch (NoBirthdayException ex)
         {
             _logger.LogError(ex, "NoBirthday in BirthdaySlashCommand");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Birthday Not Found",
+            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Birthday Not Found",
                 "No birthday is configured for this person.", Context.User));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unhandled error in BirthdaySlashCommand");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Something Went Wrong",
+            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Something Went Wrong",
                 "There was an unexpected error.", Context.User));
         }
     }
@@ -87,31 +87,31 @@ public class BirthdayCommand : InteractionModuleBase<SocketInteractionContext>
             var birthdayForPerson = await _birthdayBusinessLayer.GetBirthdayForPerson(user.Id.ToString());
             if (birthdayForPerson == null)
             {
-                await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Error Finding Time",
+                await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Error Finding Time",
                     "Could not find time for person.", Context.User));
                 return;
             }
 
             var messageToSend = BuildBirthdayMessage(birthdayForPerson.Value);
-            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"{user.GetNameToDisplay()}'s Birthday",
+            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbedWithUserFooter($"{user.GetNameToDisplay()}'s Birthday",
                 messageToSend, Context.User));
         }
         catch (PersonNotFoundException ex)
         {
             _logger.LogError(ex, "PersonNotFound in BirthdayMessageCommand");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Person Not Found",
+            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Person Not Found",
                 "That person wasn't found!", Context.User));
         }
         catch (NoBirthdayException ex)
         {
             _logger.LogError(ex, "NoBirthday in BirthdayMessageCommand");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Birthday Not Found",
+            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Birthday Not Found",
                 "No birthday is configured for this person.", Context.User));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unhandled error in BirthdayMessageCommand");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Something Went Wrong",
+            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Something Went Wrong",
                 "There was an unexpected error.", Context.User));
         }
     }
@@ -126,31 +126,31 @@ public class BirthdayCommand : InteractionModuleBase<SocketInteractionContext>
             var birthdayForPerson = await _birthdayBusinessLayer.GetBirthdayForPerson(user.Id.ToString());
             if (birthdayForPerson == null)
             {
-                await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Error Finding Time",
+                await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Error Finding Time",
                     "Could not find time for person.", Context.User));
                 return;
             }
 
             var messageToSend = BuildBirthdayMessage(birthdayForPerson.Value);
-            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed($"{user.GetNameToDisplay()} 's Birthday",
+            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbedWithUserFooter($"{user.GetNameToDisplay()} 's Birthday",
                 messageToSend, Context.User));
         }
         catch (PersonNotFoundException ex)
         {
             _logger.LogError(ex, "PersonNotFound in BirthdayUserCommand");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Person Not Found",
+            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Person Not Found",
                 "That person wasn't found!", Context.User));
         }
         catch (NoBirthdayException ex)
         {
             _logger.LogError(ex, "NoBirthday in BirthdayUserCommand");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Birthday Not Found",
+            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Birthday Not Found",
                 "No birthday is configured for this person.", Context.User));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unhandled error in BirthdayUserCommand");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Something Went Wrong",
+            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Something Went Wrong",
                 "There was an unexpected error.", Context.User));
         }
     }

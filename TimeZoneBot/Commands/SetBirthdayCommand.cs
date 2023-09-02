@@ -45,7 +45,7 @@ public class SetBirthdayCommand : InteractionModuleBase<SocketInteractionContext
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to parse birthday from entered date");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Invalid Birthday",
+            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Invalid Birthday",
                 "The provided birthday was not valid.",
                 member));
             return;
@@ -56,12 +56,12 @@ public class SetBirthdayCommand : InteractionModuleBase<SocketInteractionContext
         if (!wasSet)
         {
             _logger.LogError($"Failed to set birthday to {birthdayDate} - SetBirthday returned false.");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Failed to Set Time Zone",
+            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Failed to Set Time Zone",
                 "There was an error setting the time zone.", Context.User));
             return;
         }
 
-        await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed("Birthday Set Successfully",
+        await FollowupAsync(embed: _discordFormatter.BuildRegularEmbedWithUserFooter("Birthday Set Successfully",
             $"Birthday was successfully set to {birthdayDate}", Context.User));
     }
 }

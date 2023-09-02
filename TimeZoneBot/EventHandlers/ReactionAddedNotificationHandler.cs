@@ -76,14 +76,14 @@ public class ReactionAddedNotificationHandler : INotificationHandler<ReactionAdd
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error in ReactionAddedNotificationHandler");
-                await message.ReplyAsync(embed: _discordFormatter.BuildErrorEmbed("Error!",
+                await message.ReplyAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Error!",
                     "There was an error retrieving the time(s) for that user. Make sure the user has set up their timezone.", reactingUser), allowedMentions: AllowedMentions.None);
                 return Task.CompletedTask;
             }
 
             var messageToSend = string.Join("\n", timeMessages);
 
-            await message.ReplyAsync(embed: _discordFormatter.BuildRegularEmbed("Time(s) Requested",
+            await message.ReplyAsync(embed: _discordFormatter.BuildRegularEmbedWithUserFooter("Time(s) Requested",
                     messageToSend,
                     reactingUser), allowedMentions: AllowedMentions.None);
 

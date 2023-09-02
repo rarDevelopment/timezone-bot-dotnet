@@ -33,7 +33,7 @@ public class ViewSettingsCommand : InteractionModuleBase<SocketInteractionContex
             message += $"Time Reactions: {GetEnabledText(guildConfig.EnableReactions)}\n";
             message += $"Default Time Zone: {(!string.IsNullOrEmpty(guildConfig.DefaultTimeZone) ? guildConfig.DefaultTimeZone : "Not Set")}\n";
 
-            await RespondAsync(embed: _discordFormatter.BuildRegularEmbed($"Settings for {Context.Guild.Name}",
+            await RespondAsync(embed: _discordFormatter.BuildRegularEmbedWithUserFooter($"Settings for {Context.Guild.Name}",
                 message,
                 Context.User));
             return;
