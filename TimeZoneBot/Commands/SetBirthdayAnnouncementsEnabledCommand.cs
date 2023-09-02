@@ -44,12 +44,12 @@ public class SetBirthdayAnnouncementsEnabledCommand : InteractionModuleBase<Sock
         if (!wasSet)
         {
             _logger.LogError($"Failed to set EnableBirthdayAnnouncements to {isEnabled} - SetReactionsEnabled returned false.");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbed("Failed to Set Birthday Announcements Configuration",
+            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Failed to Set Birthday Announcements Configuration",
                 "There was an error changing that setting.", Context.User));
             return;
         }
 
-        await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed("Birthday Announcements Configuration Set Successfully",
+        await FollowupAsync(embed: _discordFormatter.BuildRegularEmbedWithUserFooter("Birthday Announcements Configuration Set Successfully",
             $"Birthday Announcements are **{(isEnabled ? "ON" : "OFF")}**", Context.User));
     }
 }

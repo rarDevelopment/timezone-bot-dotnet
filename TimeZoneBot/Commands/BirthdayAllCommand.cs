@@ -43,7 +43,7 @@ public class BirthdayAllCommand : InteractionModuleBase<SocketInteractionContext
             .WithButton("Sort Alphabetically", $"birthdaySort:{BirthdaySortOrder.Alphabetical}",
                 emote: new Emoji("🔤"));
 
-        await FollowupAsync(embed: _discordFormatter.BuildRegularEmbed("Birthdays", message, Context.User), components: buttonBuilder.Build());
+        await FollowupAsync(embed: _discordFormatter.BuildRegularEmbedWithUserFooter("Birthdays", message, Context.User), components: buttonBuilder.Build());
     }
 
     private async Task<string> BuildAllBirthdaysMessage(IEnumerable<SocketGuildUser> members,
@@ -128,7 +128,7 @@ public class BirthdayAllCommand : InteractionModuleBase<SocketInteractionContext
         await Context.Interaction.ModifyOriginalResponseAsync(properties =>
         {
             properties.Embed =
-                _discordFormatter.BuildRegularEmbed($"Birthdays ({ParseSortByName(birthdaySortOrderType)})",
+                _discordFormatter.BuildRegularEmbedWithUserFooter($"Birthdays ({ParseSortByName(birthdaySortOrderType)})",
                     message, Context.User);
         });
     }
