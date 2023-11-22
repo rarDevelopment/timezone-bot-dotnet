@@ -7,23 +7,12 @@ using TimeZoneBot.Notifications;
 
 namespace TimeZoneBot.EventHandlers;
 
-public class ReactionAddedNotificationHandler : INotificationHandler<ReactionAddedNotification>
-{
-    private readonly ITimeZoneBusinessLayer _timeZoneBusinessLayer;
-    private readonly IConfigurationBusinessLayer _configurationBusinessLayer;
-    private readonly ILogger<DiscordBot> _logger;
-    private readonly IDiscordFormatter _discordFormatter;
-
-    public ReactionAddedNotificationHandler(ITimeZoneBusinessLayer timeZoneBusinessLayer,
+public class ReactionAddedNotificationHandler(ITimeZoneBusinessLayer timeZoneBusinessLayer,
         IConfigurationBusinessLayer configurationBusinessLayer,
         ILogger<DiscordBot> logger,
         IDiscordFormatter discordFormatter)
-    {
-        _timeZoneBusinessLayer = timeZoneBusinessLayer;
-        _configurationBusinessLayer = configurationBusinessLayer;
-        _logger = logger;
-        _discordFormatter = discordFormatter;
-    }
+    : INotificationHandler<ReactionAddedNotification>
+{
     public Task Handle(ReactionAddedNotification notification, CancellationToken cancellationToken)
     {
         _ = Task.Run(async () =>
@@ -40,7 +29,7 @@ public class ReactionAddedNotificationHandler : INotificationHandler<ReactionAdd
                 return Task.CompletedTask;
             }
 
-            var config = await _configurationBusinessLayer.GetConfiguration(guildChannel.Guild);
+            var config = await configurationBusinessLayer.GetConfiguration(guildChannel.Guild);
             if (!config.EnableReactions)
             {
                 return Task.CompletedTask;
@@ -69,21 +58,21 @@ public class ReactionAddedNotificationHandler : INotificationHandler<ReactionAdd
                     var personReactingId = reaction.UserId.ToString();
                     // Note: this might seem flipped, because you are reacting on the time a person said, rather than specifying a time yourself
                     var specifiedTime = match.Value.Trim();
-                    var timeForPerson = await _timeZoneBusinessLayer.GetSpecificTimeForPerson(personReactingId, personSayingTimeId, specifiedTime);
+                    var timeForPerson = await timeZoneBusinessLayer.GetSpecificTimeForPerson(personReactingId, personSayingTimeId, specifiedTime);
                     timeMessages.Add(TimeHelpers.BuildSpecificTimeReactionMessage(timeForPerson.TimeOfDay, specifiedTime, message.Author));
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in ReactionAddedNotificationHandler");
-                await message.ReplyAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Error!",
+                logger.LogError(ex, "Error in ReactionAddedNotificationHandler");
+                await message.ReplyAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Error!",
                     "There was an error retrieving the time(s) for that user. Make sure the user has set up their timezone.", reactingUser), allowedMentions: AllowedMentions.None);
                 return Task.CompletedTask;
             }
 
             var messageToSend = string.Join("\n", timeMessages);
 
-            await message.ReplyAsync(embed: _discordFormatter.BuildRegularEmbedWithUserFooter("Time(s) Requested",
+            await message.ReplyAsync(embed: discordFormatter.BuildRegularEmbedWithUserFooter("Time(s) Requested",
                     messageToSend,
                     reactingUser), allowedMentions: AllowedMentions.None);
 

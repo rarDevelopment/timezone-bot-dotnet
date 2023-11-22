@@ -7,18 +7,14 @@ using TimeZoneBot.Models;
 namespace TimeZoneBot.DataLayer.SchemaModels;
 
 [BsonIgnoreExtraElements]
-public class PersonEntity
+public class PersonEntity(string userId)
 {
-    public PersonEntity(string userId)
-    {
-        UserId = userId;
-    }
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; set; }
 
     [BsonElement("userId")]
-    public string UserId { get; set; }
+    public string UserId { get; set; } = userId;
 
     [BsonElement("timezone")]
     public string? TimeZone { get; set; }

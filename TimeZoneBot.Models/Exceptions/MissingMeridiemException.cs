@@ -1,6 +1,3 @@
 ﻿namespace TimeZoneBot.Models.Exceptions;
 
-public class MissingMeridiemException : Exception
-{
-    public MissingMeridiemException(string timeInput) : base($"You must specify AM or PM - {timeInput}") { }
-}
+public class MissingMeridiemException(string timeInput) : Exception($"You must specify AM or PM - {timeInput}");

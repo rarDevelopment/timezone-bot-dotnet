@@ -5,33 +5,16 @@ using TimeZoneBot.Models.Exceptions;
 
 namespace TimeZoneBot.EventHandlers;
 
-public class BirthdayCheckHandler
+public class BirthdayCheckHandler(DiscordSocketClient client,
+    ITimeZoneBusinessLayer timeZoneBusinessLayer,
+    IBirthdayBusinessLayer birthdayBusinessLayer,
+    IConfigurationBusinessLayer configurationBusinessLayer,
+    DiscordSettings discordSettings,
+    ILogger<BirthdayCheckHandler> logger)
 {
-    private readonly DiscordSocketClient _client;
-    private readonly ITimeZoneBusinessLayer _timeZoneBusinessLayer;
-    private readonly IBirthdayBusinessLayer _birthdayBusinessLayer;
-    private readonly IConfigurationBusinessLayer _configurationBusinessLayer;
-    private readonly DiscordSettings _discordSettings;
-    private readonly ILogger<BirthdayCheckHandler> _logger;
-
-    public BirthdayCheckHandler(DiscordSocketClient client,
-        ITimeZoneBusinessLayer timeZoneBusinessLayer,
-        IBirthdayBusinessLayer birthdayBusinessLayer,
-        IConfigurationBusinessLayer configurationBusinessLayer,
-        DiscordSettings discordSettings,
-        ILogger<BirthdayCheckHandler> logger)
-    {
-        _client = client;
-        _timeZoneBusinessLayer = timeZoneBusinessLayer;
-        _birthdayBusinessLayer = birthdayBusinessLayer;
-        _configurationBusinessLayer = configurationBusinessLayer;
-        _discordSettings = discordSettings;
-        _logger = logger;
-    }
-
     public async Task HandleBirthdayCheck()
     {
-        var guilds = _client.Guilds;
+        var guilds = client.Guilds;
         foreach (var guild in guilds)
         {
             try
@@ -40,14 +23,14 @@ public class BirthdayCheckHandler
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Failed to post to guild {guild.Name} (id: {guild.Id}) - {ex.Message}");
+                logger.LogError($"Failed to post to guild {guild.Name} (id: {guild.Id}) - {ex.Message}");
             }
         }
     }
 
     private async Task SendMessagesForBirthdaysInGuild(SocketGuild guild)
     {
-        var configuration = await _configurationBusinessLayer.GetConfiguration(guild);
+        var configuration = await configurationBusinessLayer.GetConfiguration(guild);
         if (!configuration.EnableBirthdayAnnouncements)
         {
             return;
@@ -57,7 +40,7 @@ public class BirthdayCheckHandler
         foreach (var member in membersToCheck)
         {
             var id = member.Id.ToString();
-            var birthdayToCheck = await _birthdayBusinessLayer.GetBirthdayForPerson(id);
+            var birthdayToCheck = await birthdayBusinessLayer.GetBirthdayForPerson(id);
             if (birthdayToCheck == null)
             {
                 continue;
@@ -66,7 +49,7 @@ public class BirthdayCheckHandler
             ZonedDateTime? timeForUser;
             try
             {
-                timeForUser = await _timeZoneBusinessLayer.GetTimeForPerson(id);
+                timeForUser = await timeZoneBusinessLayer.GetTimeForPerson(id);
             }
             catch (NoTimeZoneException)
             {
@@ -75,7 +58,7 @@ public class BirthdayCheckHandler
                 {
                     continue;
                 }
-                timeForUser = _timeZoneBusinessLayer.GetTimeInTimeZone(defaultTimeZone);
+                timeForUser = timeZoneBusinessLayer.GetTimeInTimeZone(defaultTimeZone);
             }
 
             if (timeForUser == null)
@@ -85,7 +68,7 @@ public class BirthdayCheckHandler
 
             if (timeForUser.Value.Day == birthdayToCheck.Value.Day
                 && timeForUser.Value.Month == birthdayToCheck.Value.Month
-                && timeForUser.Value.Hour == _discordSettings.HourForBirthdayAnnouncements)
+                && timeForUser.Value.Hour == discordSettings.HourForBirthdayAnnouncements)
             {
                 await guild.SystemChannel.SendMessageAsync(
                     $"Today is {member.Mention}'s birthday! Happy birthday {member.Mention}!! 🎂");

@@ -3,17 +3,10 @@ using TimeZoneBot.BusinessLayer.Interfaces;
 
 namespace TimeZoneBot.Commands;
 
-public class ViewSettingsCommand : InteractionModuleBase<SocketInteractionContext>
+public class ViewSettingsCommand(IConfigurationBusinessLayer configurationBusinessLayer,
+        IDiscordFormatter discordFormatter)
+    : InteractionModuleBase<SocketInteractionContext>
 {
-    private readonly IConfigurationBusinessLayer _configurationBusinessLayer;
-    private readonly IDiscordFormatter _discordFormatter;
-
-    public ViewSettingsCommand(IConfigurationBusinessLayer configurationBusinessLayer, IDiscordFormatter discordFormatter)
-    {
-        _configurationBusinessLayer = configurationBusinessLayer;
-        _discordFormatter = discordFormatter;
-    }
-
     [DefaultMemberPermissions(GuildPermission.Administrator)]
     [SlashCommand("view-settings", "See the current settings for the bot.")]
     public async Task ViewSettings()
@@ -26,14 +19,14 @@ public class ViewSettingsCommand : InteractionModuleBase<SocketInteractionContex
         }
         if (member.GuildPermissions.Administrator)
         {
-            var guildConfig = await _configurationBusinessLayer.GetConfiguration(Context.Guild);
+            var guildConfig = await configurationBusinessLayer.GetConfiguration(Context.Guild);
 
             var message = "";
             message += $"Birthday Announcements: {GetEnabledText(guildConfig.EnableBirthdayAnnouncements)}\n";
             message += $"Time Reactions: {GetEnabledText(guildConfig.EnableReactions)}\n";
             message += $"Default Time Zone: {(!string.IsNullOrEmpty(guildConfig.DefaultTimeZone) ? guildConfig.DefaultTimeZone : "Not Set")}\n";
 
-            await RespondAsync(embed: _discordFormatter.BuildRegularEmbedWithUserFooter($"Settings for {Context.Guild.Name}",
+            await RespondAsync(embed: discordFormatter.BuildRegularEmbedWithUserFooter($"Settings for {Context.Guild.Name}",
                 message,
                 Context.User));
             return;

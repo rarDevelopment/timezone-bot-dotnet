@@ -6,18 +6,11 @@ using TimeZoneBot.Models.Exceptions;
 
 namespace TimeZoneBot.BusinessLayer;
 
-public class BirthdayBusinessLayer : IBirthdayBusinessLayer
+public class BirthdayBusinessLayer(IPersonDataLayer personDataLayer) : IBirthdayBusinessLayer
 {
-    private readonly IPersonDataLayer _personDataLayer;
-
-    public BirthdayBusinessLayer(IPersonDataLayer personDataLayer)
-    {
-        _personDataLayer = personDataLayer;
-    }
-
     public async Task<LocalDate?> GetBirthdayForPerson(string userId)
     {
-        var person = await _personDataLayer.GetPerson(userId);
+        var person = await personDataLayer.GetPerson(userId);
         if (person == null)
         {
             throw new PersonNotFoundException(userId);
@@ -28,7 +21,7 @@ public class BirthdayBusinessLayer : IBirthdayBusinessLayer
     public async Task<bool> SetBirthday(IUser user, LocalDate birthday)
     {
         var userId = user.Id.ToString();
-        var person = await _personDataLayer.GetPerson(userId);
+        var person = await personDataLayer.GetPerson(userId);
         if (person == null)
         {
             throw new PersonNotFoundException(userId);
@@ -36,6 +29,6 @@ public class BirthdayBusinessLayer : IBirthdayBusinessLayer
 
         var birthdayString = BirthdayHelpers.FormatSortableBirthday(birthday);
 
-        return await _personDataLayer.SetBirthday(userId, birthdayString);
+        return await personDataLayer.SetBirthday(userId, birthdayString);
     }
 }

@@ -4,21 +4,11 @@ using TimeZoneBot.BusinessLayer.Interfaces;
 
 namespace TimeZoneBot.Commands;
 
-public class SetDefaultTimeZoneCommand : InteractionModuleBase<SocketInteractionContext>
-{
-    private readonly IConfigurationBusinessLayer _configurationBusinessLayer;
-    private readonly IDiscordFormatter _discordFormatter;
-    private readonly ILogger<DiscordBot> _logger;
-
-    public SetDefaultTimeZoneCommand(IConfigurationBusinessLayer configurationBusinessLayer,
+public class SetDefaultTimeZoneCommand(IConfigurationBusinessLayer configurationBusinessLayer,
         IDiscordFormatter discordFormatter,
         ILogger<DiscordBot> logger)
-    {
-        _configurationBusinessLayer = configurationBusinessLayer;
-        _discordFormatter = discordFormatter;
-        _logger = logger;
-    }
-
+    : InteractionModuleBase<SocketInteractionContext>
+{
     [DefaultMemberPermissions(GuildPermission.Administrator)]
     [SlashCommand("set-default-time-zone", "Set the default time zone for birthday checks when members have not set their time zone.")]
     public async Task SetDefaultTimeZoneSlashCommand(
@@ -43,23 +33,23 @@ public class SetDefaultTimeZoneCommand : InteractionModuleBase<SocketInteraction
         var timeZone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(timeZoneName);
         if (timeZone == null)
         {
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Invalid Time Zone",
+            await FollowupAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Invalid Time Zone",
                 "The provided time zone was not valid. Please visit https://rardk64.com/timezones/ and set your time zone there, or copy it and set it here.",
                 member));
             return;
         }
 
-        var wasSet = await _configurationBusinessLayer.SetDefaultTimeZone(Context.Guild, timeZoneName);
+        var wasSet = await configurationBusinessLayer.SetDefaultTimeZone(Context.Guild, timeZoneName);
 
         if (!wasSet)
         {
-            _logger.LogError($"Failed to set DefaultTimeZone to {timeZoneName} - SetDefaultTimeZone returned false.");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Failed to Set Time Reactions Configuration",
+            logger.LogError($"Failed to set DefaultTimeZone to {timeZoneName} - SetDefaultTimeZone returned false.");
+            await FollowupAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Failed to Set Time Reactions Configuration",
                 "There was an error changing that setting.", Context.User));
             return;
         }
 
-        await FollowupAsync(embed: _discordFormatter.BuildRegularEmbedWithUserFooter("Default Time Zone Set Successfully",
+        await FollowupAsync(embed: discordFormatter.BuildRegularEmbedWithUserFooter("Default Time Zone Set Successfully",
             $"Server Default Time Zone is set to **{timeZoneName}**", Context.User));
     }
 }
