@@ -6,21 +6,11 @@ using TimeZoneBot.Models.Exceptions;
 
 namespace TimeZoneBot.Commands;
 
-public class TimeAllCommand : InteractionModuleBase<SocketInteractionContext>
-{
-    private readonly ITimeZoneBusinessLayer _timeZoneBusinessLayer;
-    private readonly IDiscordFormatter _discordFormatter;
-    private readonly ILogger<DiscordBot> _logger;
-
-    public TimeAllCommand(ITimeZoneBusinessLayer timeZoneBusinessLayer,
+public class TimeAllCommand(ITimeZoneBusinessLayer timeZoneBusinessLayer,
         IDiscordFormatter discordFormatter,
         ILogger<DiscordBot> logger)
-    {
-        _timeZoneBusinessLayer = timeZoneBusinessLayer;
-        _discordFormatter = discordFormatter;
-        _logger = logger;
-    }
-
+    : InteractionModuleBase<SocketInteractionContext>
+{
     [SlashCommand("time-all", "Get the current time for the all users in their respective time zones.")]
     public async Task TimeAllSlashCommand(
         [Summary("Time", "The specific time in your time zone for which you'd like to see everyone's times in their time zone.")] string? specifiedTime = null
@@ -40,8 +30,8 @@ public class TimeAllCommand : InteractionModuleBase<SocketInteractionContext>
                 var targetUserId = user.Id.ToString();
 
                 var time = !string.IsNullOrEmpty(specifiedTime)
-                    ? await _timeZoneBusinessLayer.GetSpecificTimeForPerson(targetUserId, requesterUserId, specifiedTime)
-                    : await _timeZoneBusinessLayer.GetTimeForPerson(targetUserId);
+                    ? await timeZoneBusinessLayer.GetSpecificTimeForPerson(targetUserId, requesterUserId, specifiedTime)
+                    : await timeZoneBusinessLayer.GetTimeForPerson(targetUserId);
                 if (time == null)
                 {
                     continue;
@@ -52,7 +42,7 @@ public class TimeAllCommand : InteractionModuleBase<SocketInteractionContext>
             catch (TimeZoneNotFoundException) { }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unhandled error in TimeAllSlashCommand");
+                logger.LogError(ex, "Unhandled error in TimeAllSlashCommand");
             }
         }
 
@@ -62,7 +52,7 @@ public class TimeAllCommand : InteractionModuleBase<SocketInteractionContext>
 
         if (!string.IsNullOrEmpty(messageToSend))
         {
-            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbedWithUserFooter("Current Time for Everyone in this Channel",
+            await FollowupAsync(embed: discordFormatter.BuildRegularEmbedWithUserFooter("Current Time for Everyone in this Channel",
             messageToSend, Context.User));
         }
     }

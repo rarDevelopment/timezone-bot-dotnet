@@ -6,21 +6,11 @@ using TimeZoneBot.Models.Exceptions;
 
 namespace TimeZoneBot.Commands;
 
-public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
-{
-    private readonly ITimeZoneBusinessLayer _timeZoneBusinessLayer;
-    private readonly IDiscordFormatter _discordFormatter;
-    private readonly ILogger<DiscordBot> _logger;
-
-    public TimeCommand(ITimeZoneBusinessLayer timeZoneBusinessLayer,
+public class TimeCommand(ITimeZoneBusinessLayer timeZoneBusinessLayer,
         IDiscordFormatter discordFormatter,
         ILogger<DiscordBot> logger)
-    {
-        _timeZoneBusinessLayer = timeZoneBusinessLayer;
-        _discordFormatter = discordFormatter;
-        _logger = logger;
-    }
-
+    : InteractionModuleBase<SocketInteractionContext>
+{
     [SlashCommand("time", "Get the current time for the specified user in their time zone.")]
 
     public async Task TimeSlashCommand(
@@ -41,16 +31,16 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
             var targetUserId = user.Id.ToString();
             if (string.IsNullOrEmpty(specifiedTime))
             {
-                var time = await _timeZoneBusinessLayer.GetTimeForPerson(targetUserId);
+                var time = await timeZoneBusinessLayer.GetTimeForPerson(targetUserId);
                 if (time == null)
                 {
-                    await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Error Finding Time",
+                    await FollowupAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Error Finding Time",
                         "Could not find time for person.", Context.User));
                     return;
                 }
 
                 var message = TimeHelpers.BuildTimeMessage(time.Value);
-                await FollowupAsync(embed: _discordFormatter.BuildRegularEmbedWithUserFooter($"Current Time for {user.GetNameToDisplay()}",
+                await FollowupAsync(embed: discordFormatter.BuildRegularEmbedWithUserFooter($"Current Time for {user.GetNameToDisplay()}",
                     message, Context.User));
             }
             else
@@ -58,43 +48,43 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
                 var timeRegex = new Regex(TimeHelpers.TimeRegexPattern, RegexOptions.IgnoreCase);
                 if (!timeRegex.IsMatch(specifiedTime))
                 {
-                    await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Error with Provided Time",
+                    await FollowupAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Error with Provided Time",
                         "The time provided was not a valid time format.", user));
                 }
 
                 var requesterUserId = Context.User.Id.ToString();
 
-                var time = await _timeZoneBusinessLayer.GetSpecificTimeForPerson(targetUserId, requesterUserId,
+                var time = await timeZoneBusinessLayer.GetSpecificTimeForPerson(targetUserId, requesterUserId,
                     specifiedTime);
 
                 var message = TimeHelpers.BuildSpecificTimeMessage(time.TimeOfDay, specifiedTime, user);
-                await FollowupAsync(embed: _discordFormatter.BuildRegularEmbedWithUserFooter(
+                await FollowupAsync(embed: discordFormatter.BuildRegularEmbedWithUserFooter(
                     $"Specific Time Request for {user.GetNameToDisplay()}",
                     message, Context.User));
             }
         }
         catch (MissingMeridiemException ex)
         {
-            _logger.LogError(ex, "MissingMeridiem in TimeSlashCommand");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Missing Meridiem",
+            logger.LogError(ex, "MissingMeridiem in TimeSlashCommand");
+            await FollowupAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Missing Meridiem",
                 "You must specify AM or PM.", Context.User));
         }
         catch (PersonNotFoundException ex)
         {
-            _logger.LogError(ex, "PersonNotFound in TimeSlashCommand");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Person Not Found",
+            logger.LogError(ex, "PersonNotFound in TimeSlashCommand");
+            await FollowupAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Person Not Found",
                 "That person wasn't found!", Context.User));
         }
         catch (NoTimeZoneException ex)
         {
-            _logger.LogError(ex, "NoTimeZone in TimeSlashCommand");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Time Zone Not Found",
+            logger.LogError(ex, "NoTimeZone in TimeSlashCommand");
+            await FollowupAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Time Zone Not Found",
                 "No time zone was configured for this user. Use /set-time-zone.", Context.User));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unhandled error in TimeSlashCommand");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Something Went Wrong",
+            logger.LogError(ex, "Unhandled error in TimeSlashCommand");
+            await FollowupAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Something Went Wrong",
                 "There was an unexpected error.", Context.User));
         }
     }
@@ -108,34 +98,34 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
 
         try
         {
-            var time = await _timeZoneBusinessLayer.GetTimeForPerson(user.Id.ToString());
+            var time = await timeZoneBusinessLayer.GetTimeForPerson(user.Id.ToString());
             if (time == null)
             {
-                await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Error Finding Time",
+                await FollowupAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Error Finding Time",
                     "Could not find time for person.", Context.User));
                 return;
             }
 
             var messageToSend = TimeHelpers.BuildTimeMessage(time.Value);
-            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbedWithUserFooter($"Current Time for {user.GetNameToDisplay()}",
+            await FollowupAsync(embed: discordFormatter.BuildRegularEmbedWithUserFooter($"Current Time for {user.GetNameToDisplay()}",
                 messageToSend, Context.User));
         }
         catch (PersonNotFoundException ex)
         {
-            _logger.LogError(ex, "PersonNotFound in TimeMessageCommand");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Person Not Found",
+            logger.LogError(ex, "PersonNotFound in TimeMessageCommand");
+            await FollowupAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Person Not Found",
                 "That person wasn't found!", Context.User));
         }
         catch (NoTimeZoneException ex)
         {
-            _logger.LogError(ex, "NoTimeZone in TimeMessageCommand");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Time Zone Not Found",
+            logger.LogError(ex, "NoTimeZone in TimeMessageCommand");
+            await FollowupAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Time Zone Not Found",
                 "The associated time zone was not valid.", Context.User));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unhandled error in TimeMessageCommand");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Something Went Wrong",
+            logger.LogError(ex, "Unhandled error in TimeMessageCommand");
+            await FollowupAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Something Went Wrong",
                 "There was an unexpected error.", Context.User));
         }
     }
@@ -147,34 +137,34 @@ public class TimeCommand : InteractionModuleBase<SocketInteractionContext>
 
         try
         {
-            var time = await _timeZoneBusinessLayer.GetTimeForPerson(user.Id.ToString());
+            var time = await timeZoneBusinessLayer.GetTimeForPerson(user.Id.ToString());
             if (time == null)
             {
-                await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Error Finding Time",
+                await FollowupAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Error Finding Time",
                     "Could not find time for person.", Context.User));
                 return;
             }
 
             var messageToSend = TimeHelpers.BuildTimeMessage(time.Value);
-            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbedWithUserFooter($"Current Time for {user.GetNameToDisplay()}",
+            await FollowupAsync(embed: discordFormatter.BuildRegularEmbedWithUserFooter($"Current Time for {user.GetNameToDisplay()}",
                 messageToSend, Context.User));
         }
         catch (PersonNotFoundException ex)
         {
-            _logger.LogError(ex, "PersonNotFound in TimeUserCommand");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Person Not Found",
+            logger.LogError(ex, "PersonNotFound in TimeUserCommand");
+            await FollowupAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Person Not Found",
                 "That person wasn't found!", Context.User));
         }
         catch (NoTimeZoneException ex)
         {
-            _logger.LogError(ex, "NoTimeZone in TimeUserCommand");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Time Zone Not Found",
+            logger.LogError(ex, "NoTimeZone in TimeUserCommand");
+            await FollowupAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Time Zone Not Found",
                 "The associated time zone was not valid.", Context.User));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unhandled error in TimeUserCommand");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Something Went Wrong",
+            logger.LogError(ex, "Unhandled error in TimeUserCommand");
+            await FollowupAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Something Went Wrong",
                 "There was an unexpected error.", Context.User));
         }
     }

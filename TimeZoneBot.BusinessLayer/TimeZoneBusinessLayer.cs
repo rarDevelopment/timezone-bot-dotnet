@@ -9,17 +9,8 @@ using TimeZoneBot.Models.Exceptions;
 
 namespace TimeZoneBot.BusinessLayer;
 
-public class TimeZoneBusinessLayer : ITimeZoneBusinessLayer
+public class TimeZoneBusinessLayer(IPersonDataLayer personDataLayer, IClock clock) : ITimeZoneBusinessLayer
 {
-    private readonly IPersonDataLayer _personDataLayer;
-    private readonly IClock _clock;
-
-    public TimeZoneBusinessLayer(IPersonDataLayer personDataLayer, IClock clock)
-    {
-        _personDataLayer = personDataLayer;
-        _clock = clock;
-    }
-
     public async Task<ZonedDateTime?> GetTimeForPerson(string userId)
     {
         var person = await GetPerson(userId);
@@ -29,7 +20,7 @@ public class TimeZoneBusinessLayer : ITimeZoneBusinessLayer
             throw new NoTimeZoneException(userId);
         }
 
-        var timeForPerson = GetTimeInTimeZone(timeZone, _clock.GetCurrentInstant());
+        var timeForPerson = GetTimeInTimeZone(timeZone, clock.GetCurrentInstant());
         return timeForPerson;
     }
 
@@ -40,25 +31,25 @@ public class TimeZoneBusinessLayer : ITimeZoneBusinessLayer
         {
             throw new NoTimeZoneException(timeZoneName);
         }
-        var timeInTimeZone = GetTimeInTimeZone(timeZone, _clock.GetCurrentInstant());
+        var timeInTimeZone = GetTimeInTimeZone(timeZone, clock.GetCurrentInstant());
         return timeInTimeZone;
     }
 
     private async Task<Person?> GetPerson(string userId)
     {
-        var person = await _personDataLayer.GetPerson(userId);
+        var person = await personDataLayer.GetPerson(userId);
         return person;
     }
 
     public async Task<ZonedDateTime> GetSpecificTimeForPerson(string targetUserId, string requesterUserId, string time)
     {
-        var targetPerson = await _personDataLayer.GetPerson(targetUserId);
+        var targetPerson = await personDataLayer.GetPerson(targetUserId);
         if (targetPerson == null)
         {
             throw new PersonNotFoundException(targetUserId);
         }
 
-        var requestingPerson = await _personDataLayer.GetPerson(requesterUserId);
+        var requestingPerson = await personDataLayer.GetPerson(requesterUserId);
         if (requestingPerson == null)
         {
             throw new PersonNotFoundException(requesterUserId);
@@ -90,7 +81,7 @@ public class TimeZoneBusinessLayer : ITimeZoneBusinessLayer
             localTime = LocalTimePattern.CreateWithInvariantCulture(TimeHelpers.TimeFormat24Hour).Parse(cleanedTime).GetValueOrThrow();
         }
 
-        var requesterCurrentDate = _clock.GetCurrentInstant().InZone(requesterTimeZone).Date;
+        var requesterCurrentDate = clock.GetCurrentInstant().InZone(requesterTimeZone).Date;
 
         var requesterTime = requesterCurrentDate + localTime;
         var requesterTimeZoned = requesterTime.InZoneLeniently(requesterTimeZone);
@@ -102,13 +93,13 @@ public class TimeZoneBusinessLayer : ITimeZoneBusinessLayer
     public async Task<bool> SetTimeZone(IUser user, string timeZone)
     {
         var userId = user.Id.ToString();
-        var person = await _personDataLayer.GetPerson(userId);
+        var person = await personDataLayer.GetPerson(userId);
         if (person == null)
         {
             throw new PersonNotFoundException(userId);
         }
 
-        return await _personDataLayer.SetTimeZone(userId, timeZone);
+        return await personDataLayer.SetTimeZone(userId, timeZone);
     }
 
     private static string CleanTime(string time)

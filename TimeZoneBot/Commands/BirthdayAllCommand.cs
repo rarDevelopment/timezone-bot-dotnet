@@ -6,24 +6,12 @@ using TimeZoneBot.Models.Exceptions;
 
 namespace TimeZoneBot.Commands;
 
-public class BirthdayAllCommand : InteractionModuleBase<SocketInteractionContext>
-{
-    private readonly IBirthdayBusinessLayer _birthdayBusinessLayer;
-    private readonly IClock _clock;
-    private readonly IDiscordFormatter _discordFormatter;
-    private readonly ILogger<DiscordBot> _logger;
-
-    public BirthdayAllCommand(IBirthdayBusinessLayer birthdayBusinessLayer,
+public class BirthdayAllCommand(IBirthdayBusinessLayer birthdayBusinessLayer,
         IClock clock,
         IDiscordFormatter discordFormatter,
         ILogger<DiscordBot> logger)
-    {
-        _birthdayBusinessLayer = birthdayBusinessLayer;
-        _clock = clock;
-        _discordFormatter = discordFormatter;
-        _logger = logger;
-    }
-
+    : InteractionModuleBase<SocketInteractionContext>
+{
     [SlashCommand("birthday-all", "Get the birthdays for all users.")]
 
     public async Task BirthdayAllSlashCommand(
@@ -43,7 +31,7 @@ public class BirthdayAllCommand : InteractionModuleBase<SocketInteractionContext
             .WithButton("Sort Alphabetically", $"birthdaySort:{BirthdaySortOrder.Alphabetical}",
                 emote: new Emoji("🔤"));
 
-        await FollowupAsync(embed: _discordFormatter.BuildRegularEmbedWithUserFooter("Birthdays", message, Context.User), components: buttonBuilder.Build());
+        await FollowupAsync(embed: discordFormatter.BuildRegularEmbedWithUserFooter("Birthdays", message, Context.User), components: buttonBuilder.Build());
     }
 
     private async Task<string> BuildAllBirthdaysMessage(IEnumerable<SocketGuildUser> members,
@@ -55,7 +43,7 @@ public class BirthdayAllCommand : InteractionModuleBase<SocketInteractionContext
         {
             try
             {
-                var birthday = await _birthdayBusinessLayer.GetBirthdayForPerson(user.Id.ToString());
+                var birthday = await birthdayBusinessLayer.GetBirthdayForPerson(user.Id.ToString());
                 if (birthday == null)
                 {
                     continue;
@@ -67,7 +55,7 @@ public class BirthdayAllCommand : InteractionModuleBase<SocketInteractionContext
             catch (NoBirthdayException) { }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unhandled error in BirthdaySlashCommand");
+                logger.LogError(ex, "Unhandled error in BirthdaySlashCommand");
             }
         }
 
@@ -82,8 +70,8 @@ public class BirthdayAllCommand : InteractionModuleBase<SocketInteractionContext
                 {
                     var annualDate = new AnnualDate(ub.Value.Month, ub.Value.Day);
                     // TODO: determine if we can depend on having the user's timezone here
-                    var lenientBirthday = GetLenientBirthday(annualDate, _clock.GetCurrentInstant().InUtc().Year);
-                    if (lenientBirthday < _clock.GetCurrentInstant().InUtc().Date)
+                    var lenientBirthday = GetLenientBirthday(annualDate, clock.GetCurrentInstant().InUtc().Year);
+                    if (lenientBirthday < clock.GetCurrentInstant().InUtc().Date)
                     {
                         lenientBirthday = new LocalDate(lenientBirthday.Year + 1, lenientBirthday.Month,
                             lenientBirthday.Day);
@@ -119,7 +107,7 @@ public class BirthdayAllCommand : InteractionModuleBase<SocketInteractionContext
         var members = Context.Guild.Users.Where(u => u.GetPermissions(Context.Channel as IGuildChannel).ViewChannel && !u.IsBot);
         if (!Enum.TryParse(typeof(BirthdaySortOrder), sortingTypeParam, out var sortingTypeParsed))
         {
-            _logger.LogError("Error in SortButton, could not parse sort type.");
+            logger.LogError("Error in SortButton, could not parse sort type.");
             return;
         }
 
@@ -128,7 +116,7 @@ public class BirthdayAllCommand : InteractionModuleBase<SocketInteractionContext
         await Context.Interaction.ModifyOriginalResponseAsync(properties =>
         {
             properties.Embed =
-                _discordFormatter.BuildRegularEmbedWithUserFooter($"Birthdays ({ParseSortByName(birthdaySortOrderType)})",
+                discordFormatter.BuildRegularEmbedWithUserFooter($"Birthdays ({ParseSortByName(birthdaySortOrderType)})",
                     message, Context.User);
         });
     }

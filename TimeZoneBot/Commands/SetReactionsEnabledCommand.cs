@@ -3,21 +3,11 @@ using TimeZoneBot.BusinessLayer.Interfaces;
 
 namespace TimeZoneBot.Commands;
 
-public class SetReactionsEnabledCommand : InteractionModuleBase<SocketInteractionContext>
-{
-    private readonly IConfigurationBusinessLayer _configurationBusinessLayer;
-    private readonly IDiscordFormatter _discordFormatter;
-    private readonly ILogger<DiscordBot> _logger;
-
-    public SetReactionsEnabledCommand(IConfigurationBusinessLayer configurationBusinessLayer,
+public class SetReactionsEnabledCommand(IConfigurationBusinessLayer configurationBusinessLayer,
         IDiscordFormatter discordFormatter,
         ILogger<DiscordBot> logger)
-    {
-        _configurationBusinessLayer = configurationBusinessLayer;
-        _discordFormatter = discordFormatter;
-        _logger = logger;
-    }
-
+    : InteractionModuleBase<SocketInteractionContext>
+{
     [DefaultMemberPermissions(GuildPermission.Administrator)]
     [SlashCommand("set-reactions", "Set time reactions on/off.")]
     public async Task SetReactionsEnabledSlashCommand(
@@ -39,17 +29,17 @@ public class SetReactionsEnabledCommand : InteractionModuleBase<SocketInteractio
 
         await DeferAsync();
 
-        var wasSet = await _configurationBusinessLayer.SetReactionsEnabled(Context.Guild, isEnabled);
+        var wasSet = await configurationBusinessLayer.SetReactionsEnabled(Context.Guild, isEnabled);
 
         if (!wasSet)
         {
-            _logger.LogError($"Failed to set EnableReactions to {isEnabled} - SetReactionsEnabled returned false.");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Failed to Set Time Reactions Configuration",
+            logger.LogError($"Failed to set EnableReactions to {isEnabled} - SetReactionsEnabled returned false.");
+            await FollowupAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Failed to Set Time Reactions Configuration",
                 "There was an error changing that setting.", Context.User));
             return;
         }
 
-        await FollowupAsync(embed: _discordFormatter.BuildRegularEmbedWithUserFooter("Time Reactions Configuration Set Successfully",
+        await FollowupAsync(embed: discordFormatter.BuildRegularEmbedWithUserFooter("Time Reactions Configuration Set Successfully",
             $"Time Reactions are **{(isEnabled ? "ON" : "OFF")}**", Context.User));
     }
 }

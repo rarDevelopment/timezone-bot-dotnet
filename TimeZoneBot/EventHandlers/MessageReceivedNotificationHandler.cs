@@ -6,15 +6,9 @@ using TimeZoneBot.Notifications;
 
 namespace TimeZoneBot.EventHandlers;
 
-public class MessageReceivedNotificationHandler : INotificationHandler<MessageReceivedNotification>
+public class MessageReceivedNotificationHandler
+    (IConfigurationBusinessLayer configurationBusinessLayer) : INotificationHandler<MessageReceivedNotification>
 {
-    private readonly IConfigurationBusinessLayer _configurationBusinessLayer;
-
-    public MessageReceivedNotificationHandler(IConfigurationBusinessLayer configurationBusinessLayer)
-    {
-        _configurationBusinessLayer = configurationBusinessLayer;
-    }
-
     public Task Handle(MessageReceivedNotification notification, CancellationToken cancellationToken)
     {
         _ = Task.Run(async () =>
@@ -39,7 +33,7 @@ public class MessageReceivedNotificationHandler : INotificationHandler<MessageRe
                 return Task.CompletedTask;
             }
 
-            var config = await _configurationBusinessLayer.GetConfiguration(guildChannel.Guild);
+            var config = await configurationBusinessLayer.GetConfiguration(guildChannel.Guild);
             if (!config.EnableReactions)
             {
                 return Task.CompletedTask;

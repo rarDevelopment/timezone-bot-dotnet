@@ -6,21 +6,11 @@ using TimeZoneBot.Models.Exceptions;
 
 namespace TimeZoneBot.Commands;
 
-public class SetTimeZoneCommand : InteractionModuleBase<SocketInteractionContext>
-{
-    private readonly ITimeZoneBusinessLayer _timeZoneBusinessLayer;
-    private readonly IDiscordFormatter _discordFormatter;
-    private readonly ILogger<DiscordBot> _logger;
-
-    public SetTimeZoneCommand(ITimeZoneBusinessLayer timeZoneBusinessLayer,
+public class SetTimeZoneCommand(ITimeZoneBusinessLayer timeZoneBusinessLayer,
         IDiscordFormatter discordFormatter,
         ILogger<DiscordBot> logger)
-    {
-        _timeZoneBusinessLayer = timeZoneBusinessLayer;
-        _discordFormatter = discordFormatter;
-        _logger = logger;
-    }
-
+    : InteractionModuleBase<SocketInteractionContext>
+{
     [SlashCommand("set-time-zone", "Set your time zone.")]
     public async Task SetTimeZoneSlashCommand(
         [Summary("time-zone", "Time Zone name (visit https://rardk64.com/timezones/ and set your time zone there).")]
@@ -38,45 +28,45 @@ public class SetTimeZoneCommand : InteractionModuleBase<SocketInteractionContext
         var timeZone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(timeZoneName);
         if (timeZone == null)
         {
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Invalid Time Zone",
-                "The provided time zone was not valid. Please visit https://rardk64.com/timezones/ and set your time zone there, or copy it and set it here..",
+            await FollowupAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Invalid Time Zone",
+                "The provided time zone was not valid. Please visit https://rardk64.com/timezones/ and set your time zone there, or copy it and set it here.",
                 member));
             return;
         }
 
-        var wasSet = await _timeZoneBusinessLayer.SetTimeZone(Context.User, timeZoneName);
+        var wasSet = await timeZoneBusinessLayer.SetTimeZone(Context.User, timeZoneName);
 
         if (!wasSet)
         {
-            _logger.LogError($"Failed to set time zone with name {timeZoneName} - SetTimeZone returned false.");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Failed to Set Time Zone",
+            logger.LogError($"Failed to set time zone with name {timeZoneName} - SetTimeZone returned false.");
+            await FollowupAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Failed to Set Time Zone",
                 "There was an error setting the time zone.", Context.User));
             return;
         }
 
         try
         {
-            var time = await _timeZoneBusinessLayer.GetTimeForPerson(Context.User.Id.ToString());
+            var time = await timeZoneBusinessLayer.GetTimeForPerson(Context.User.Id.ToString());
             if (time == null)
             {
-                await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Error Finding Time",
+                await FollowupAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Error Finding Time",
                     "Could not find time for person.", Context.User));
                 return;
             }
 
-            await FollowupAsync(embed: _discordFormatter.BuildRegularEmbedWithUserFooter("Time Zone Set Successfully",
+            await FollowupAsync(embed: discordFormatter.BuildRegularEmbedWithUserFooter("Time Zone Set Successfully",
                 $"Time Zone was successfully set to {timeZoneName}, and the current time should be: {TimeHelpers.FormatTime(time.Value.TimeOfDay)}", Context.User));
         }
         catch (NoTimeZoneException ex)
         {
-            _logger.LogError(ex, "NoTimeZone in SetTimeZoneCommand");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Time Zone Not Found",
+            logger.LogError(ex, "NoTimeZone in SetTimeZoneCommand");
+            await FollowupAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Time Zone Not Found",
                 "The associated time zone was not valid.", Context.User));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unhandled error in SetTimeZoneCommand");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Something Went Wrong",
+            logger.LogError(ex, "Unhandled error in SetTimeZoneCommand");
+            await FollowupAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Something Went Wrong",
                 "There was an unexpected error.", Context.User));
         }
     }

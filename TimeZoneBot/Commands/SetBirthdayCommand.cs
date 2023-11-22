@@ -5,21 +5,11 @@ using TimeZoneBot.Commands.Enums;
 
 namespace TimeZoneBot.Commands;
 
-public class SetBirthdayCommand : InteractionModuleBase<SocketInteractionContext>
-{
-    private readonly IBirthdayBusinessLayer _birthdayBusinessLayer;
-    private readonly IDiscordFormatter _discordFormatter;
-    private readonly ILogger<DiscordBot> _logger;
-
-    public SetBirthdayCommand(IBirthdayBusinessLayer birthdayBusinessLayer,
+public class SetBirthdayCommand(IBirthdayBusinessLayer birthdayBusinessLayer,
         IDiscordFormatter discordFormatter,
         ILogger<DiscordBot> logger)
-    {
-        _birthdayBusinessLayer = birthdayBusinessLayer;
-        _discordFormatter = discordFormatter;
-        _logger = logger;
-    }
-
+    : InteractionModuleBase<SocketInteractionContext>
+{
     [SlashCommand("set-birthday", "Set your birthday.")]
     public async Task SetBirthdaySlashCommand(
         [Summary("month", "The month of your birthday.")] BirthdayMonths month,
@@ -44,24 +34,24 @@ public class SetBirthdayCommand : InteractionModuleBase<SocketInteractionContext
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to parse birthday from entered date");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Invalid Birthday",
+            logger.LogError(ex, "Failed to parse birthday from entered date");
+            await FollowupAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Invalid Birthday",
                 "The provided birthday was not valid.",
                 member));
             return;
         }
 
-        var wasSet = await _birthdayBusinessLayer.SetBirthday(Context.User, birthdayDate);
+        var wasSet = await birthdayBusinessLayer.SetBirthday(Context.User, birthdayDate);
 
         if (!wasSet)
         {
-            _logger.LogError($"Failed to set birthday to {birthdayDate} - SetBirthday returned false.");
-            await FollowupAsync(embed: _discordFormatter.BuildErrorEmbedWithUserFooter("Failed to Set Time Zone",
+            logger.LogError($"Failed to set birthday to {birthdayDate} - SetBirthday returned false.");
+            await FollowupAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Failed to Set Time Zone",
                 "There was an error setting the time zone.", Context.User));
             return;
         }
 
-        await FollowupAsync(embed: _discordFormatter.BuildRegularEmbedWithUserFooter("Birthday Set Successfully",
+        await FollowupAsync(embed: discordFormatter.BuildRegularEmbedWithUserFooter("Birthday Set Successfully",
             $"Birthday was successfully set to {birthdayDate}", Context.User));
     }
 }
