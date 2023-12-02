@@ -5,7 +5,7 @@ TimeZoneBot has 2 main features:
 - Converting times between time zones for users in your Discord
 - Checking users birthdays (and a birthday post on their birthday)
 
-Now written in C# and .NET 7.
+Now written in C# and .NET 8.
 
 ## Links
 
