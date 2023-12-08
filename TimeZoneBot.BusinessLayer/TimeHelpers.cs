@@ -20,7 +20,46 @@ public static class TimeHelpers
         return time.Replace(".", "").ToLower().Contains(meridiem.ToString().ToLower());
     }
 
-    public static bool HasAnyMeridiem(string time)
+    public static string TimeWithMeridiem(string time)
+    {
+        if (HasAnyMeridiem(time))
+        {
+            return time;
+        }
+
+        var splitTime = time.Split(':');
+        if (splitTime.Length == 0)
+        {
+            return time;
+        }
+
+        var hourString = splitTime[0];
+        var minuteString = splitTime[1];
+
+        if (splitTime.Length <= 0 || !int.TryParse(hourString, out var hour))
+        {
+            return time;
+        }
+
+        var meridiemToUse = Meridiem.AM;
+        if (hour >= 12)
+        {
+            meridiemToUse = Meridiem.PM;
+            if (hour > 12)
+            {
+                hour -= 12;
+            }
+        }
+        if (hour == 0)
+        {
+            hour = 12;
+        }
+
+        return $"{hour}{(!string.IsNullOrEmpty(minuteString) ? $":{minuteString}" : "")} {meridiemToUse}";
+
+    }
+
+    private static bool HasAnyMeridiem(string time)
     {
         var allValues = GetAllMeridiems();
         return allValues.Any(meridiem => HasMeridiem(meridiem, time));
@@ -61,12 +100,14 @@ public static class TimeHelpers
 
     public static string BuildSpecificTimeMessage(LocalTime time, string specifiedTime, IUser user)
     {
-        return $"At `{specifiedTime}` your time, it will be **{FormatTime(time)}** in {user.GetNameToDisplay()}'s time.";
+        var timeWithMeridiem = TimeWithMeridiem(specifiedTime);
+        return $"At **{timeWithMeridiem}** your time, it will be **{FormatTime(time)}** in {user.GetNameToDisplay()}'s time.";
     }
 
     public static string BuildSpecificTimeReactionMessage(LocalTime time, string specifiedTime, IUser user)
     {
-        return $"At `{specifiedTime}` in {user.GetNameToDisplay()}'s time, it will be **{FormatTime(time)}** in your time.";
+        var timeWithMeridiem = TimeWithMeridiem(specifiedTime);
+        return $"At **{timeWithMeridiem}** in {user.GetNameToDisplay()}'s time, it will be **{FormatTime(time)}** in your time.";
     }
 
     public static string BuildTimeMessage(ZonedDateTime time)
