@@ -5,7 +5,6 @@ global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.Logging;
 using DiscordDotNetUtilities;
 using DiscordDotNetUtilities.Interfaces;
-using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
@@ -54,7 +53,9 @@ builder.ConfigureServices((host, services) =>
     {
         BotToken = host.Configuration["Discord:BotToken"],
         HourForBirthdayAnnouncements = Convert.ToInt32(host.Configuration["Discord:HourForBirthdayAnnouncements"]),
+        TimeZoneConfigWebsite = host.Configuration["Discord:TimeZoneConfigWebsite"],
     };
+
     var databaseSettings = new DatabaseSettings
     {
         Cluster = host.Configuration["Database:Cluster"],

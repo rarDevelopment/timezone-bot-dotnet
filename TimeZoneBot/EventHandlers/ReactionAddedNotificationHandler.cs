@@ -66,7 +66,7 @@ public class ReactionAddedNotificationHandler(ITimeZoneBusinessLayer timeZoneBus
             {
                 logger.LogError(ex, "Error in ReactionAddedNotificationHandler");
                 await message.ReplyAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Error!",
-                    "There was an error retrieving the time(s) for that user. Make sure the user has set up their timezone.", reactingUser), allowedMentions: AllowedMentions.None);
+                    "There was an error retrieving the time(s) for that user. Make sure the user has set up their time zone.", reactingUser), allowedMentions: AllowedMentions.None);
                 return Task.CompletedTask;
             }
 
