@@ -18,7 +18,7 @@ Now written in C# and .NET 8.
 ## Getting Started
 
 - Invite the bot to your server using the invite link above.
-- Each user will have to set up their time zone. To do this, it is recommended that you visit [the bot website](https://www.rardk64.com/) using the instructions below.
+- Each user will have to set up their time zone. To do this, it is recommended that you visit [the TimeZoneBot website](https://rardk.com/bots/timezonebot) using the instructions below.
 - Each user can also set up their birthday. For birthday alerts to work, the user will have to set up their time zone as well.
 - **NOTE:** If your server is made up of users who are entirely in the same time zone, and you just wish to use this bot for birthday wishes, you can set a default time zone using the `/set-default-time-zone` command - for more on this command, see the [Commands section](#commands) below.
 
