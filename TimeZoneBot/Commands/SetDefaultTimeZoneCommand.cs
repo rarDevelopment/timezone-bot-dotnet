@@ -1,18 +1,20 @@
 ﻿using DiscordDotNetUtilities.Interfaces;
 using NodaTime;
 using TimeZoneBot.BusinessLayer.Interfaces;
+using TimeZoneBot.Models;
 
 namespace TimeZoneBot.Commands;
 
 public class SetDefaultTimeZoneCommand(IConfigurationBusinessLayer configurationBusinessLayer,
         IDiscordFormatter discordFormatter,
+        DiscordSettings discordSettings,
         ILogger<DiscordBot> logger)
     : InteractionModuleBase<SocketInteractionContext>
 {
     [DefaultMemberPermissions(GuildPermission.Administrator)]
     [SlashCommand("set-default-time-zone", "Set the default time zone for birthday checks when members have not set their time zone.")]
     public async Task SetDefaultTimeZoneSlashCommand(
-        [Summary("time-zone", "Time Zone ID (visit https://rardk64.com/timezones/ and set your time zone there).")] string timeZoneName
+        [Summary("time-zone", "Time Zone ID (use /link to find)")] string timeZoneName
         )
     {
         var member = Context.Guild.Users.FirstOrDefault(u => u.Id == Context.User.Id);
@@ -34,7 +36,7 @@ public class SetDefaultTimeZoneCommand(IConfigurationBusinessLayer configuration
         if (timeZone == null)
         {
             await FollowupAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Invalid Time Zone",
-                "The provided time zone was not valid. Please visit https://rardk64.com/timezones/ and set your time zone there, or copy it and set it here.",
+                $"The provided time zone was not valid. Please visit {discordSettings.TimeZoneConfigWebsite} and set your time zone there, or copy it and set it here.",
                 member));
             return;
         }

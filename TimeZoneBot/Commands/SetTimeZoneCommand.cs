@@ -2,18 +2,20 @@
 using NodaTime;
 using TimeZoneBot.BusinessLayer;
 using TimeZoneBot.BusinessLayer.Interfaces;
+using TimeZoneBot.Models;
 using TimeZoneBot.Models.Exceptions;
 
 namespace TimeZoneBot.Commands;
 
 public class SetTimeZoneCommand(ITimeZoneBusinessLayer timeZoneBusinessLayer,
         IDiscordFormatter discordFormatter,
+        DiscordSettings discordSettings,
         ILogger<DiscordBot> logger)
     : InteractionModuleBase<SocketInteractionContext>
 {
-    [SlashCommand("set-time-zone", "Set your time zone.")]
+    [SlashCommand("set-time-zone", "Set your time zone (recommended: use /link to set this instead).")]
     public async Task SetTimeZoneSlashCommand(
-        [Summary("time-zone", "Time Zone name (visit https://rardk64.com/timezones/ and set your time zone there).")]
+        [Summary("time-zone", "Time Zone ID")]
         string timeZoneName)
     {
         var member = Context.Guild.Users.FirstOrDefault(u => u.Id == Context.User.Id);
@@ -29,7 +31,7 @@ public class SetTimeZoneCommand(ITimeZoneBusinessLayer timeZoneBusinessLayer,
         if (timeZone == null)
         {
             await FollowupAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Invalid Time Zone",
-                "The provided time zone was not valid. Please visit https://rardk64.com/timezones/ and set your time zone there, or copy it and set it here.",
+                $"The provided time zone was not valid. Please visit {discordSettings.TimeZoneConfigWebsite} and set your time zone there, or copy it and set it here.",
                 member));
             return;
         }
