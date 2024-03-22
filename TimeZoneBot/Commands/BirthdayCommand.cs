@@ -77,8 +77,8 @@ public class BirthdayCommand(IBirthdayBusinessLayer birthdayBusinessLayer,
             var birthdayForPerson = await birthdayBusinessLayer.GetBirthdayForPerson(user.Id.ToString());
             if (birthdayForPerson == null)
             {
-                await FollowupAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Error Finding Time",
-                    "Could not find time for person.", Context.User));
+                await FollowupAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Error Finding Birthday",
+                    "Could not find a birthday for that person.", Context.User));
                 return;
             }
 
@@ -116,8 +116,8 @@ public class BirthdayCommand(IBirthdayBusinessLayer birthdayBusinessLayer,
             var birthdayForPerson = await birthdayBusinessLayer.GetBirthdayForPerson(user.Id.ToString());
             if (birthdayForPerson == null)
             {
-                await FollowupAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Error Finding Time",
-                    "Could not find time for person.", Context.User));
+                await FollowupAsync(embed: discordFormatter.BuildErrorEmbedWithUserFooter("Error Finding Birthday",
+                    "Could not find a birthday for that person.", Context.User));
                 return;
             }
 
