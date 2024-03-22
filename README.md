@@ -24,9 +24,9 @@ Now written in C# and .NET 8.
 
 ## Using the Website
 
-- Browse to https://rardk64.com/
-- Click "Log in with Discord" and log in using your Discord account
-- In the TimeZoneBot section, tap the "Settings" button
+- Browse to [the TimeZoneBot website](https://rardk.com/bots/timezonebot/). If you're brought to the home page with a list of bots, click Settings under TimeZoneBot.
+- You'll be asked to log into your Discord account and authorize for the website. Click Authorize.
+- You'll be redirected to the time zone list.
 - Search for your time zone, and either click the "Set" button to set it immediately, or use the copy icon button to copy it and use it with either the `/set-time-zone` or `/set-default-time-zone` commands in Discord.
 
 ![image](https://github.com/rarDevelopment/timezone-bot-dotnet/assets/4060573/03e1ba34-ab22-49bb-8f9c-950f95c4e19f)
