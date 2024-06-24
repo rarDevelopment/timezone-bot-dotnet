@@ -12,7 +12,7 @@ public static class TimeHelpers
     public const string TimeFormatNoMinutes = "h tt";
     public const string TimeFormat24Hour = "H:mm";
     public const string DayFormat = "dddd, dd MMMM";
-    public const string TimeButtonEmojiId = "819015682871001108";
+    public const ulong TimeButtonEmojiId = 819015682871001108;
     public const string TimeButtonEmojiName = "time_button";
 
     public static bool HasMeridiem(Meridiem meridiem, string time)
@@ -95,7 +95,7 @@ public static class TimeHelpers
 
     public static Emote GetTimeButtonEmote()
     {
-        return Emote.Parse($"<:{TimeButtonEmojiName}:{TimeButtonEmojiId}>");
+        return new Emote(TimeButtonEmojiId, TimeButtonEmojiName);
     }
 
     public static string BuildSpecificTimeMessage(LocalTime time, string specifiedTime, IUser user)
