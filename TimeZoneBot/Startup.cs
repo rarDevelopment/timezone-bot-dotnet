@@ -73,16 +73,16 @@ builder.ConfigureServices((host, services) =>
     services.AddSingleton(databaseSettings);
     services.AddSingleton(versionSettings);
 
-    services.AddScoped<IDiscordFormatter, DiscordFormatter>();
+    services.AddSingleton<IDiscordFormatter, DiscordFormatter>();
 
-    services.AddScoped<ITimeZoneBusinessLayer, TimeZoneBusinessLayer>();
-    services.AddScoped<IBirthdayBusinessLayer, BirthdayBusinessLayer>();
-    services.AddScoped<IConfigurationBusinessLayer, ConfigurationBusinessLayer>();
+    services.AddSingleton<ITimeZoneBusinessLayer, TimeZoneBusinessLayer>();
+    services.AddSingleton<IBirthdayBusinessLayer, BirthdayBusinessLayer>();
+    services.AddSingleton<IConfigurationBusinessLayer, ConfigurationBusinessLayer>();
 
-    services.AddScoped<BirthdayCheckHandler>();
+    services.AddSingleton<BirthdayCheckHandler>();
 
-    services.AddScoped<IPersonDataLayer, PersonDataLayer>();
-    services.AddScoped<IConfigurationDataLayer, ConfigurationDataLayer>();
+    services.AddSingleton<IPersonDataLayer, PersonDataLayer>();
+    services.AddSingleton<IConfigurationDataLayer, ConfigurationDataLayer>();
 
     IClock clock = SystemClock.Instance;
     services.AddTransient(_ => clock);

@@ -13,7 +13,7 @@ public class SetTimeZoneCommand(ITimeZoneBusinessLayer timeZoneBusinessLayer,
         ILogger<DiscordBot> logger)
     : InteractionModuleBase<SocketInteractionContext>
 {
-    [SlashCommand("set-time-zone", "Set your time zone (recommended: use /link to set this instead).")]
+    [SlashCommand("set-time-zone", "Set your time zone (recommended: use /link-to-timezone-site to set this on the website instead).")]
     public async Task SetTimeZoneSlashCommand(
         [Summary("time-zone", "Time Zone ID")]
         string timeZoneName)

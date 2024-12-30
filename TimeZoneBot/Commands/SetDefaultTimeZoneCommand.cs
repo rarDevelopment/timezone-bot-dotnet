@@ -14,7 +14,7 @@ public class SetDefaultTimeZoneCommand(IConfigurationBusinessLayer configuration
     [DefaultMemberPermissions(GuildPermission.Administrator)]
     [SlashCommand("set-default-time-zone", "Set the default time zone for birthday checks when members have not set their time zone.")]
     public async Task SetDefaultTimeZoneSlashCommand(
-        [Summary("time-zone", "Time Zone ID (use /link to find)")] string timeZoneName
+        [Summary("time-zone", "Time Zone ID (use /link-to-timezone-site to find your time zone)")] string timeZoneName
         )
     {
         var member = Context.Guild.Users.FirstOrDefault(u => u.Id == Context.User.Id);
