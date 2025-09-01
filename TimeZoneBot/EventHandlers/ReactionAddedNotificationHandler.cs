@@ -1,6 +1,5 @@
 ﻿using System.Text.RegularExpressions;
 using DiscordDotNetUtilities.Interfaces;
-using DiscordDotNetUtilities.Interfaces;
 using TimeZoneBot.BusinessLayer;
 using TimeZoneBot.BusinessLayer.Interfaces;
 using TimeZoneBot.Notifications;
