@@ -1,5 +1,5 @@
 ﻿using System.Text.RegularExpressions;
-using MediatR;
+using DiscordDotNetUtilities.Interfaces;
 using TimeZoneBot.BusinessLayer;
 using TimeZoneBot.BusinessLayer.Interfaces;
 using TimeZoneBot.Notifications;
@@ -7,9 +7,9 @@ using TimeZoneBot.Notifications;
 namespace TimeZoneBot.EventHandlers;
 
 public class MessageReceivedNotificationHandler
-    (IConfigurationBusinessLayer configurationBusinessLayer) : INotificationHandler<MessageReceivedNotification>
+    (IConfigurationBusinessLayer configurationBusinessLayer) : IEventHandler<MessageReceivedNotification>
 {
-    public Task Handle(MessageReceivedNotification notification, CancellationToken cancellationToken)
+    public Task HandleAsync(MessageReceivedNotification notification, CancellationToken cancellationToken)
     {
         _ = Task.Run(async () =>
         {

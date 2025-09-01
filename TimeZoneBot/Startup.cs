@@ -7,15 +7,16 @@ using DiscordDotNetUtilities;
 using DiscordDotNetUtilities.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using NodaTime;
 using Serilog;
 using System.Reflection;
-using NodaTime;
 using TimeZoneBot;
 using TimeZoneBot.BusinessLayer;
 using TimeZoneBot.BusinessLayer.Interfaces;
 using TimeZoneBot.DataLayer;
 using TimeZoneBot.EventHandlers;
 using TimeZoneBot.Models;
+using TimeZoneBot.Notifications;
 
 var builder = new HostBuilder();
 
@@ -91,7 +92,10 @@ builder.ConfigureServices((host, services) =>
 
     services.AddSingleton<InteractionHandler>();
 
-    services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(DiscordBot).GetTypeInfo().Assembly));
+    services.AddScoped<IEventBus, EventBus>();
+
+    services.AddScoped<IEventHandler<MessageReceivedNotification>, MessageReceivedNotificationHandler>();
+    services.AddScoped<IEventHandler<ReactionAddedNotification>, ReactionAddedNotificationHandler>();
 
     services.AddHostedService<DiscordBot>();
 });

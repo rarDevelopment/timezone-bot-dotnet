@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using DiscordDotNetUtilities.Interfaces;
-using MediatR;
+using DiscordDotNetUtilities.Interfaces;
 using TimeZoneBot.BusinessLayer;
 using TimeZoneBot.BusinessLayer.Interfaces;
 using TimeZoneBot.Notifications;
@@ -11,9 +11,9 @@ public class ReactionAddedNotificationHandler(ITimeZoneBusinessLayer timeZoneBus
         IConfigurationBusinessLayer configurationBusinessLayer,
         ILogger<DiscordBot> logger,
         IDiscordFormatter discordFormatter)
-    : INotificationHandler<ReactionAddedNotification>
+    : IEventHandler<ReactionAddedNotification>
 {
-    public Task Handle(ReactionAddedNotification notification, CancellationToken cancellationToken)
+    public Task HandleAsync(ReactionAddedNotification notification, CancellationToken cancellationToken)
     {
         _ = Task.Run(async () =>
         {
