@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="TimeZoneBot.BusinessLayer/TimeZoneBot.BusinessLayer.csproj" />
+  <Project Path="TimeZoneBot.DataLayer/TimeZoneBot.DataLayer.csproj" />
+  <Project Path="TimeZoneBot.Models/TimeZoneBot.Models.csproj" />
+  <Project Path="TimeZoneBot/TimeZoneBot.csproj" />
+</Solution>
